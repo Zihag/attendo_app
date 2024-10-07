@@ -3,6 +3,8 @@ import 'package:attendo_app/screens/signup_screen.dart';
 import 'package:attendo_app/screens/verify_email_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -10,9 +12,33 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
+
+  Future<User?> _signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if(googleUser == null){
+        return null;
+      }
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      final AuthCredential authCredential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      UserCredential userCredential = await _firebaseAuth.signInWithCredential(authCredential);
+      return userCredential.user;
+    } catch (e){
+      print(e.toString());
+      return null;
+    }
+  }
 
   // Hàm đăng nhập Firebase Authentication
   Future<void> _login() async {
@@ -103,6 +129,18 @@ class _LoginScreenState extends State<LoginScreen> {
                 );
               },
               child: Text("Don't have an account? Sign up"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                User? user = await _signInWithGoogle();
+                if (user != null) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()),
+                  );
+                }
+              },
+              child: Text('Sign in with Google'),
             ),
           ],
         ),
