@@ -1,6 +1,6 @@
 import 'package:attendo_app/screens/home_screen.dart';
-import 'package:attendo_app/screens/signup_screen.dart';
-import 'package:attendo_app/screens/verify_email_screen.dart';
+import 'package:attendo_app/screens/authentication/signup_screen.dart';
+import 'package:attendo_app/screens/authentication/verify_email_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -14,6 +14,8 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final RoundedLoadingButtonController _googleBtnController =
+      RoundedLoadingButtonController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
@@ -21,21 +23,25 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<User?> _signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if(googleUser == null){
+      if (googleUser == null) {
+        _googleBtnController.reset();
         return null;
       }
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
       final AuthCredential authCredential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      UserCredential userCredential = await _firebaseAuth.signInWithCredential(authCredential);
+      UserCredential userCredential =
+          await _firebaseAuth.signInWithCredential(authCredential);
       return userCredential.user;
-    } catch (e){
+    } catch (e) {
       print(e.toString());
+      _googleBtnController.reset();
       return null;
     }
   }
@@ -64,7 +70,8 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       } else {
         // Email chưa được xác minh
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => VerifyEmailScreen()));
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => VerifyEmailScreen()));
       }
     } on FirebaseAuthException catch (e) {
       String errorMessage;
@@ -130,18 +137,34 @@ class _LoginScreenState extends State<LoginScreen> {
               },
               child: Text("Don't have an account? Sign up"),
             ),
-            ElevatedButton(
+            RoundedLoadingButton(
+              controller: _googleBtnController,
               onPressed: () async {
+                _googleBtnController.start();
                 User? user = await _signInWithGoogle();
                 if (user != null) {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomeScreen()),
-                  );
+                  _googleBtnController.success();
+                  Future.delayed(Duration(seconds: 1), () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomeScreen()),
+                    );
+                  });
+                } else {
+                  _googleBtnController.reset(); // Reset khi thất bại
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Failed to sign in with Google.'),
+                  ));
                 }
               },
-              child: Text('Sign in with Google'),
-            ),
+              child: Text(
+                'Login with Google',
+                style: TextStyle(color: Colors.white),
+              ),
+              color: Colors.blue,
+              successColor: Colors.blue,
+              width: 200,
+            )
           ],
         ),
       ),
