@@ -28,6 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  app_links: ^6.3.2
   bloc: ^8.1.4
   cloud_firestore: ^5.4.4
   cupertino_icons: ^1.0.8
@@ -38,6 +39,7 @@ dependencies:
   flutter_bloc: ^8.1.6
   google_sign_in: ^6.2.1
   rounded_loading_button: ^2.1.0
+  share_plus: ^10.0.3
 
 dev_dependencies:
   flutter_lints: ^4.0.0
