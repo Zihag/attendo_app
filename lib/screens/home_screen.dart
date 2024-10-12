@@ -1,6 +1,5 @@
 import 'package:attendo_app/app_blocs/group/bloc/group_bloc.dart';
 import 'package:attendo_app/screens/group/group_detail_screen.dart';
-import 'package:bloc/bloc.dart';
 import 'package:attendo_app/screens/authentication/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +8,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 class HomeScreen extends StatelessWidget {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,8 +21,10 @@ class HomeScreen extends StatelessWidget {
             onPressed: () async {
               bool confirmSignOut = await _showSignOutDialog(context);
               if (confirmSignOut) {
-                await GoogleSignIn().signOut();
+                await _googleSignIn.signOut();
+                print('Google sign out');
                 await FirebaseAuth.instance.signOut();
+                print('Firebase sign out');
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => LoginScreen()),

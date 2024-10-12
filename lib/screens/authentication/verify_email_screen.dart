@@ -40,6 +40,8 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
       setState(() {
         _isEmailVerified = true;
       });
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Verify successful!')));
 
       // Nếu email đã xác minh, điều hướng đến HomeScreen
       _timer?.cancel(); // Hủy bộ đếm thời gian
