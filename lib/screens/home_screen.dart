@@ -2,6 +2,7 @@ import 'package:attendo_app/app_blocs/group/bloc/group_bloc.dart';
 import 'package:attendo_app/screens/group/group_detail_screen.dart';
 import 'package:attendo_app/screens/authentication/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -12,6 +13,10 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseAuth.instance.authStateChanges().listen((User? user){
+      if(user != null)
+        context.read<GroupBloc>().add(LoadGroups());
+    });
     return Scaffold(
       appBar: AppBar(
         title: Text('Home'),

@@ -25,7 +25,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           await _firebaseAuth.signInWithEmailAndPassword(
               email: event.email, password: event.password);
       // if (userCredential.user?.emailVerified == true) {
-        emit(AuthSignInSuccess());
+      emit(AuthSignInSuccess());
       // } else {
       //   emit(AuthSignInError('Please verify your email before logging in'));
       // }
@@ -57,6 +57,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           await _firebaseAuth.createUserWithEmailAndPassword(
               email: event.email, password: event.password);
       await userCredential.user?.sendEmailVerification();
+      if (userCredential.user != null) {
+        await _createUserInFireStore(userCredential.user!);
+      }
       emit(AuthSignUpSuccess());
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
@@ -98,10 +101,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
+      UserCredential userCredential = await _firebaseAuth.signInWithCredential(authCredential);
+      User? user = userCredential.user;
+      if(user!= null){
+        await _createUserInFireStore(user);
+      }
       await _firebaseAuth.signInWithCredential(authCredential);
+      
       emit(GoogleAuthAuthenticated());
     } catch (e) {
       emit(GoogleSignInError(e.toString()));
     }
+  }
+
+  Future<void> _createUserInFireStore(User user) async {
+    final userRef =
+        FirebaseFirestore.instance.collection('users').doc(user.uid);
+    await userRef.set(({
+      'uid': user.uid,
+      'email': user.email,
+      'created_at': FieldValue.serverTimestamp(),
+    }));
   }
 }

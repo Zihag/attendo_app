@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meta/meta.dart';
 
 part 'group_event.dart';
@@ -18,10 +19,20 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
   FutureOr<void> _onCreateGroup(CreateGroup event, Emitter<GroupState> emit) async {
     emit(GroupLoading());
     try {
+      User? user = FirebaseAuth.instance.currentUser;
+
+      if(user == null){
+        emit(GroupError('User not logged in'));
+        return;
+      }
       await _firestore.collection('group').add({
         'name':event.groupName,
         'description':event.groupDescription,
-        'member':[],
+        'member':[{
+          'userId': user.uid,
+        }],
+        'adminId':user.uid,
+        'create_at':FieldValue.serverTimestamp(),
       });
       add(LoadGroups());
     } catch (e){
@@ -32,7 +43,9 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
   FutureOr<void> _onLoadGroups(LoadGroups event, Emitter<GroupState> emit) async {
     emit(GroupLoading());
     try {
-      final querySnapshot = await _firestore.collection('group').get();
+      String userId = await FirebaseAuth.instance.currentUser?.uid??'';
+      print(userId);
+      final querySnapshot = await _firestore.collection('group').where('member',arrayContains: {'userId':userId}).get();
       final groups = querySnapshot.docs.map((doc) => {
         'id': doc.id,
         'name':doc['name'],
