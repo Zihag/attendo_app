@@ -9,13 +9,15 @@ final class CreateActivity extends ActivityEvent {
   final String description;
   final DateTime startTime;
   final String frequency;
+  final List<int>? weekDays;
 
   CreateActivity(
       {required this.groupId,
       required this.activityName,
       required this.description,
       required this.startTime,
-      required this.frequency});
+      required this.frequency,
+      this.weekDays, });
 }
 
 final class LoadActivities extends ActivityEvent {

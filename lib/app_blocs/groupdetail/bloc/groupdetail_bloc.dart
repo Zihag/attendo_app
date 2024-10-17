@@ -21,7 +21,7 @@ class GroupDetailBloc extends Bloc<GroupDetailEvent, GroupDetailState> {
       if(docSnapshot.exists){
         emit(GroupDetailLoaded(docSnapshot.data()!));
       } else {
-        emit(GroupDetailError('Grouo not found'));
+        emit(GroupDetailError('Group not found'));
       }
     } catch (e){
       emit(GroupDetailError('Failed to load group detials'));

@@ -16,55 +16,74 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
     on<DeleteActivity>(_onDeleteActivity);
   }
 
-  FutureOr<void> _onCreateActivity(CreateActivity event, Emitter<ActivityState> emit) async {
+  FutureOr<void> _onCreateActivity(
+      CreateActivity event, Emitter<ActivityState> emit) async {
     emit(AcitvityLoading());
     try {
       User? user = FirebaseAuth.instance.currentUser;
-      if(user == null){
+      if (user == null) {
         emit(ActivityError('User not logged in'));
         return;
       }
-      await _firebaseFirestore.collection('group').doc(event.groupId).collection('activities').add(
-        {
-          'name': event.activityName,
-          'description':event.description,
-          'startTime':event.startTime,
-          'frequency': event.frequency,
-          'createBy': user.uid,
-          'create_at': FieldValue.serverTimestamp(),
-        }
-      );
+      await _firebaseFirestore
+          .collection('group')
+          .doc(event.groupId)
+          .collection('activities')
+          .add({
+        'name': event.activityName,
+        'description': event.description,
+        'startTime': event.startTime,
+        'frequency': event.frequency,
+        'createBy': user.uid,
+        'create_at': FieldValue.serverTimestamp(),
+      });
+      emit(ActivityCreatedSuccess());
       add(LoadActivities(groupId: event.groupId));
-    } catch(e){
+    } catch (e) {
       emit(ActivityError('Failed to create activity'));
     }
   }
 
-  FutureOr<void> _onLoadActivities(LoadActivities event, Emitter<ActivityState> emit) async {
+  FutureOr<void> _onLoadActivities(
+      LoadActivities event, Emitter<ActivityState> emit) async {
     emit(AcitvityLoading());
     try {
-      final querySnapshot = await _firebaseFirestore.collection('group').doc(event.groupId).collection('activities').orderBy('create_at', descending: true).get();
+      final querySnapshot = await _firebaseFirestore
+          .collection('group')
+          .doc(event.groupId)
+          .collection('activities')
+          .orderBy('create_at', descending: true)
+          .get();
 
-      final activities = querySnapshot.docs.map((doc)=>{
-        'id': doc.id,
-        'name':doc['name'],
-        'description':doc['description'],
-        'startTime':(doc['startTime'] as Timestamp).toDate(),
-        'frequency': doc['frequency'],
-      }).toList();
+      final activities = querySnapshot.docs
+          .map((doc) => {
+                'id': doc.id,
+                'name': doc['name'],
+                'description': doc['description'],
+                'startTime': (doc['startTime'] as Timestamp).toDate(),
+                'frequency': doc['frequency'],
+              })
+          .toList();
 
+      print("Activities: $activities");
       emit(ActivityLoaded(activities));
-    } catch(e){
+    } catch (e) {
       emit(ActivityError('Failed to load activities'));
     }
   }
 
-  FutureOr<void> _onDeleteActivity(DeleteActivity event, Emitter<ActivityState> emit) async {
+  FutureOr<void> _onDeleteActivity(
+      DeleteActivity event, Emitter<ActivityState> emit) async {
     emit(AcitvityLoading());
     try {
-      await _firebaseFirestore.collection('group').doc(event.groupId).collection('activities').doc(event.activityId).delete();
+      await _firebaseFirestore
+          .collection('group')
+          .doc(event.groupId)
+          .collection('activities')
+          .doc(event.activityId)
+          .delete();
       add(LoadActivities(groupId: event.groupId));
-    } catch (e){
+    } catch (e) {
       emit(ActivityError('Failed to delete activity'));
     }
   }

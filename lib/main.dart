@@ -1,3 +1,4 @@
+import 'package:attendo_app/app_blocs/activity/bloc/activity_bloc.dart';
 import 'package:attendo_app/app_blocs/auth/bloc/auth_bloc.dart';
 import 'package:attendo_app/app_blocs/group/bloc/group_bloc.dart';
 import 'package:attendo_app/app_blocs/link_invite/bloc/invite_bloc.dart';
@@ -10,7 +11,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+      options: const FirebaseOptions(
+    apiKey: "AIzaSyAtxrh0b0F53TUnDKebBJmXDsll1nBII5g",
+    appId: "1:939882538884:android:b63034a8424e9a1e745fd1",
+    messagingSenderId: "939882538884",
+    projectId: "attendoapp-8509f",
+  ));
   runApp(MyApp());
 }
 
@@ -26,7 +33,11 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => InviteBloc(FirebaseFirestore.instance),
         ),
-        BlocProvider(create: (context)=>AuthBloc(FirebaseAuth.instance, FirebaseFirestore.instance))
+        BlocProvider(
+            create: (context) =>
+                AuthBloc(FirebaseAuth.instance, FirebaseFirestore.instance)),
+        BlocProvider(
+            create: (context) => ActivityBloc(FirebaseFirestore.instance)),
       ],
       child: MaterialApp(
         home: LoginScreen(),
