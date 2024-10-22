@@ -1,7 +1,8 @@
 import 'package:attendo_app/app_blocs/auth/bloc/auth_bloc.dart';
-import 'package:attendo_app/screens/home_screen.dart';
+import 'package:attendo_app/screens/navigation/home/home_screen.dart';
 import 'package:attendo_app/screens/authentication/signup_screen.dart';
 import 'package:attendo_app/screens/authentication/verify_email_screen.dart';
+import 'package:attendo_app/screens/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,6 +16,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final User? user = FirebaseAuth.instance.currentUser;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final RoundedLoadingButtonController _googleBtnController =
       RoundedLoadingButtonController();
@@ -38,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Future.delayed(Duration(seconds: 1),(){
               Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => HomeScreen()),
+              MaterialPageRoute(builder: (context) => MainScreen()),
             );
             });
             
@@ -54,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
             if(user != null && !user.emailVerified){
               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => VerifyEmailScreen()));
             } else {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>MainScreen()));
             }
           } else if(state is AuthSignInError){
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error)));

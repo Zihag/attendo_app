@@ -1,6 +1,6 @@
 import 'package:attendo_app/app_blocs/auth/bloc/auth_bloc.dart';
 import 'package:attendo_app/screens/authentication/login_screen.dart';
-import 'package:attendo_app/screens/home_screen.dart';
+import 'package:attendo_app/screens/navigation/home/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

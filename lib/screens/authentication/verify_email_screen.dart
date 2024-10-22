@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'package:attendo_app/screens/home_screen.dart';
+import 'package:attendo_app/screens/navigation/home/home_screen.dart';
+import 'package:attendo_app/screens/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -43,11 +44,11 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Verify successful!')));
 
-      // Nếu email đã xác minh, điều hướng đến HomeScreen
+      // Nếu email đã xác minh, điều hướng đến MainScreen
       _timer?.cancel(); // Hủy bộ đếm thời gian
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
+        MaterialPageRoute(builder: (context) => MainScreen()),
       );
     }
   }

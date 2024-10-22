@@ -2,7 +2,7 @@ import 'package:attendo_app/app_blocs/activity/bloc/activity_bloc.dart';
 import 'package:attendo_app/app_blocs/auth/bloc/auth_bloc.dart';
 import 'package:attendo_app/app_blocs/group/bloc/group_bloc.dart';
 import 'package:attendo_app/app_blocs/link_invite/bloc/invite_bloc.dart';
-import 'package:attendo_app/screens/authentication/login_screen.dart';
+import 'package:attendo_app/screens/splash/splash_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
             create: (context) => ActivityBloc(FirebaseFirestore.instance)),
       ],
       child: MaterialApp(
-        home: LoginScreen(),
+        home: SplashScreen(),
       ),
     );
   }

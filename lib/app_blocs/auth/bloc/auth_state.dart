@@ -36,3 +36,4 @@ class GoogleSignInError extends AuthState{
 
   GoogleSignInError(this.error);
 }
+

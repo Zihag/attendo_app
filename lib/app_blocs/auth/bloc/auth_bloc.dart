@@ -101,13 +101,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-      UserCredential userCredential = await _firebaseAuth.signInWithCredential(authCredential);
+      UserCredential userCredential =
+          await _firebaseAuth.signInWithCredential(authCredential);
       User? user = userCredential.user;
-      if(user!= null){
+      if (user != null) {
         await _createUserInFireStore(user);
       }
       await _firebaseAuth.signInWithCredential(authCredential);
-      
+
       emit(GoogleAuthAuthenticated());
     } catch (e) {
       emit(GoogleSignInError(e.toString()));
@@ -121,6 +122,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       'uid': user.uid,
       'email': user.email,
       'created_at': FieldValue.serverTimestamp(),
+      'displayName': user.displayName,
+      'photoUrl': user.photoURL,
+      'phoneNumber': user.phoneNumber,
     }));
   }
 }

@@ -34,9 +34,15 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
         appBar: AppBar(
           title: Text('Group Details'),
           actions: [
-            IconButton(onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context)=> InviteScreen(groupId: widget.groupId)));
-            }, icon: Icon(Icons.share))
+            IconButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              InviteScreen(groupId: widget.groupId)));
+                },
+                icon: Icon(Icons.share))
           ],
         ),
         body: Column(
@@ -71,30 +77,39 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                 return Center(child: Text('Unknown state'));
               },
             ),
-            BlocBuilder<ActivityBloc, ActivityState>(builder: (context, state) {
-              if(state is AcitvityLoading){
-                return Center(child: CircularProgressIndicator(),);
-              } else if(state is ActivityLoaded){
-                if(state.activities.isEmpty){
-                  return Center(child: Text("Let's create activity"),);
-                }
-                return Expanded(child: ListView.builder(
-                  itemCount: state.activities.length,
-                  itemBuilder:(context, index) {
-                    final activity = state.activities[index];
-                    return ListTile(
-                      title: Text(activity['name']??'No name'),
-                      subtitle: Text(activity['description']??'No description'),
+            BlocBuilder<ActivityBloc, ActivityState>(
+              builder: (context, state) {
+                if (state is AcitvityLoading) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (state is ActivityLoaded) {
+                  if (state.activities.isEmpty) {
+                    return Center(
+                      child: Text("Let's create activity"),
                     );
-                  },
-                ));
-              } else if (state is ActivityError){
-                return Center(child: Text(state.message),);
-              }
-              return SizedBox();
-            },)
+                  }
+                  return Expanded(
+                      child: ListView.builder(
+                    itemCount: state.activities.length,
+                    itemBuilder: (context, index) {
+                      final activity = state.activities[index];
+                      return ListTile(
+                        title: Text(activity['name'] ?? 'No name'),
+                        subtitle:
+                            Text(activity['description'] ?? 'No description'),
+                      );
+                    },
+                  ));
+                } else if (state is ActivityError) {
+                  return Center(
+                    child: Text(state.message),
+                  );
+                }
+                return SizedBox();
+              },
+            )
           ],
-          
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
@@ -109,6 +124,8 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
               // Tải lại dữ liệu nhóm sau khi quay lại
               BlocProvider.of<GroupDetailBloc>(context)
                   .add(LoadGroupDetail(widget.groupId));
+              BlocProvider.of<ActivityBloc>(context)
+                  .add(LoadActivities(groupId: widget.groupId));
             });
           },
           child: Icon(Icons.add),

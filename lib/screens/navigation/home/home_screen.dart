@@ -10,15 +10,16 @@ import 'package:google_sign_in/google_sign_in.dart';
 class HomeScreen extends StatelessWidget {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-
   @override
   Widget build(BuildContext context) {
-    FirebaseAuth.instance.authStateChanges().listen((User? user){
-      if(user != null)
-        context.read<GroupBloc>().add(LoadGroups());
+    final user = FirebaseAuth.instance.currentUser;
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user != null) context.read<GroupBloc>().add(LoadGroups());
     });
     return Scaffold(
+      backgroundColor: Colors.green[100],
       appBar: AppBar(
+        backgroundColor: Colors.green[100],
         title: Text('Home'),
         actions: [
           IconButton(
@@ -39,48 +40,73 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: BlocBuilder<GroupBloc, GroupState>(
-        builder: (context, state) {
-          if (state is GroupLoading) {
-            return Center(
-                child: CircularProgressIndicator()); // Hiển thị vòng tròn tải
-          } else if (state is GroupLoaded) {
-            // Hiển thị danh sách nhóm khi tải thành công
-            return ListView.builder(
-              itemCount: state.groups.length,
-              itemBuilder: (context, index) {
-                final group = state.groups[index];
-                return ListTile(
-                  title: Text(group['name']),
-                  subtitle: Text(group['description']),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () {
-                      // Xóa nhóm
-                      BlocProvider.of<GroupBloc>(context)
-                          .add(DeleteGroup(group['id']));
+      body: Column(
+        children: [
+          if (user != null)
+            Column(
+              children: [
+                CircleAvatar(
+                  radius: 40,
+                  backgroundImage: NetworkImage(
+                      user.photoURL ?? 'https://via.placeholder.com/150'),
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                Text(
+                  user.displayName ?? 'User',
+                  style: TextStyle(fontSize: 20),
+                )
+              ],
+            ),
+          Expanded(
+            child: BlocBuilder<GroupBloc, GroupState>(
+              builder: (context, state) {
+                if (state is GroupLoading) {
+                  return Center(
+                      child:
+                          CircularProgressIndicator()); // Hiển thị vòng tròn tải
+                } else if (state is GroupLoaded) {
+                  // Hiển thị danh sách nhóm khi tải thành công
+                  return ListView.builder(
+                    itemCount: state.groups.length,
+                    itemBuilder: (context, index) {
+                      final group = state.groups[index];
+                      return ListTile(
+                        title: Text(group['name']),
+                        subtitle: Text(group['description']),
+                        trailing: IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () {
+                            // Xóa nhóm
+                            BlocProvider.of<GroupBloc>(context)
+                                .add(DeleteGroup(group['id']));
+                          },
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    GroupDetailScreen(groupId: group['id']),
+                              ));
+                        },
+                      );
                     },
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              GroupDetailScreen(groupId: group['id']),
-                        ));
-                  },
-                );
+                  );
+                } else if (state is GroupError) {
+                  // Hiển thị thông báo lỗi nếu có
+                  return Center(child: Text(state.message));
+                }
+                // Mặc định nếu không có dữ liệu
+                return Center(child: Text('No groups found'));
               },
-            );
-          } else if (state is GroupError) {
-            // Hiển thị thông báo lỗi nếu có
-            return Center(child: Text(state.message));
-          }
-          // Mặc định nếu không có dữ liệu
-          return Center(child: Text('No groups found'));
-        },
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.green[50],
         onPressed: () => _showCreateGroupDialog(context), // Tạo nhóm mới
         child: Icon(Icons.add),
       ),

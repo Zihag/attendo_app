@@ -18,3 +18,4 @@ class SignUpEvent extends AuthEvent{
 }
 
 class GoogleSignInEvent extends AuthEvent{}
+
