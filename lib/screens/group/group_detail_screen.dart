@@ -90,17 +90,18 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                     );
                   }
                   return Expanded(
-                      child: ListView.builder(
-                    itemCount: state.activities.length,
-                    itemBuilder: (context, index) {
-                      final activity = state.activities[index];
-                      return ListTile(
-                        title: Text(activity['name'] ?? 'No name'),
-                        subtitle:
-                            Text(activity['description'] ?? 'No description'),
-                      );
-                    },
-                  ));
+                    child: ListView.builder(
+                      itemCount: state.activities.length,
+                      itemBuilder: (context, index) {
+                        final activity = state.activities[index];
+                        return ListTile(
+                          title: Text(activity['name'] ?? 'No name'),
+                          subtitle: Text(
+                              activity['description'] ?? 'No description'),
+                        );
+                      },
+                    ),
+                  );
                 } else if (state is ActivityError) {
                   return Center(
                     child: Text(state.message),
@@ -120,13 +121,7 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                 builder: (context) =>
                     CreateActivityScreen(groupId: widget.groupId),
               ),
-            ).then((_) {
-              // Tải lại dữ liệu nhóm sau khi quay lại
-              BlocProvider.of<GroupDetailBloc>(context)
-                  .add(LoadGroupDetail(widget.groupId));
-              BlocProvider.of<ActivityBloc>(context)
-                  .add(LoadActivities(groupId: widget.groupId));
-            });
+            );
           },
           child: Icon(Icons.add),
         ),

@@ -1,3 +1,4 @@
+import 'package:attendo_app/screens/group/group_detail_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,7 +31,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
         listener: (context, state) {
           if (state is ActivityCreatedSuccess) {
             print('Create successful');
-            Navigator.pop(context);
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>GroupDetailScreen(groupId: widget.groupId)));
           } else if (state is ActivityError) {
             print('Create error');
             ScaffoldMessenger.of(context)
