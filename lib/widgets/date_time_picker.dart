@@ -27,6 +27,10 @@ class _DateTimePickerWidgetState extends State<DateTimePickerWidget> {
       setState(() {
         selectedDateTime = pickedDate;
       });
+      widget.onDateTimeSelected(
+        selectedDateTime!,
+        widget.frequency == 'weekly' ? selectedWeekDays : null,
+      );
     }
   }
 
@@ -49,6 +53,10 @@ class _DateTimePickerWidgetState extends State<DateTimePickerWidget> {
           );
         }
       });
+      widget.onDateTimeSelected(
+        selectedDateTime!,
+        widget.frequency == 'weekly' ? selectedWeekDays : null,
+      );
     }
   }
 
@@ -92,22 +100,7 @@ class _DateTimePickerWidgetState extends State<DateTimePickerWidget> {
           onPressed: () => _selectTime(context),
           child: Text(selectedTime == null ? 'Select Time' : selectedTime!.format(context)),
         ),
-        ElevatedButton(
-          onPressed: () {
-            if (widget.frequency == 'weekly' && selectedWeekDays.isEmpty) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Please select at least one day of the week')),
-              );
-              return;
-            }
-            // Gọi hàm callback với kết quả chọn
-            widget.onDateTimeSelected(
-              selectedDateTime ?? DateTime.now(),
-              widget.frequency == 'weekly' ? selectedWeekDays : null,
-            );
-          },
-          child: Text('Confirm'),
-        ),
+        
       ],
     );
   }
