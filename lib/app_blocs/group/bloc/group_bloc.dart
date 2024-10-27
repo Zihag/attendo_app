@@ -50,6 +50,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
         'id': doc.id,
         'name':doc['name'],
         'description':doc['description'],
+        'member':doc['member'],
       }).toList();
       print('Groups: $groups');
       emit(GroupLoaded(groups));

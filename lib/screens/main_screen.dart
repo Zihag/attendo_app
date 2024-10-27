@@ -32,9 +32,13 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _screens[_selectedIndex],
-      bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor: Colors.grey[300]!,
+      body:  Stack(
+        children: [
+      _screens[_selectedIndex],
+      Align(
+        alignment: Alignment.bottomCenter,
+        child: CurvedNavigationBar(
+        backgroundColor: Colors.transparent!,
         items: [
           Icon(Icons.timer,color: Colors.grey[700],),
           Icon(Icons.notifications,color: Colors.grey[700],),
@@ -46,6 +50,9 @@ class _MainScreenState extends State<MainScreen> {
         index: 2,
         animationDuration: Duration(milliseconds: 300),height: 60.0,
         color: Colors.blue[200]!,
+      ),
+      )
+        ],
       ),
     );
   }

@@ -204,7 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Image.asset(
-                            'lib/assets/images/google_logo.png',
+                            'assets/images/google_logo.png',
                             height: 40,
                           ),
                         ],
@@ -231,7 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Image.asset(
-                            'lib/assets/images/facebook_logo.png',
+                            'assets/images/facebook_logo.png',
                             height: 40,
                           ),
                         ],

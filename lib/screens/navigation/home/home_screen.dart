@@ -1,11 +1,17 @@
+import 'dart:io';
+
 import 'package:attendo_app/app_blocs/group/bloc/group_bloc.dart';
 import 'package:attendo_app/screens/group/group_detail_screen.dart';
 import 'package:attendo_app/screens/authentication/login_screen.dart';
+import 'package:attendo_app/widgets/circle_avatar.dart';
+import 'package:attendo_app/widgets/custom_listtile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:lottie/lottie.dart';
 
 class HomeScreen extends StatelessWidget {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
@@ -43,53 +49,126 @@ class HomeScreen extends StatelessWidget {
       body: Column(
         children: [
           if (user != null)
-            Column(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('Hello, ',
+                          style: GoogleFonts.openSans(
+                              fontSize: 20, fontWeight: FontWeight.w700)),
+                      Text(user.displayName ?? 'User',
+                          style: GoogleFonts.openSans(
+                              fontSize: 20, fontWeight: FontWeight.w700)),
+                    ],
+                  ),
+                  CustomCircleAvatar(
+                      photoURL:
+                          user.photoURL ?? 'https://via.placeholder.com/150'),
+                ],
+              ),
+            ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25.0),
+            child: Row(
               children: [
-                CircleAvatar(
-                  radius: 40,
-                  backgroundImage: NetworkImage(
-                      user.photoURL ?? 'https://via.placeholder.com/150'),
+                Expanded(
+                    child: Divider(
+                  thickness: 1,
+                  color: Colors.grey[400],
+                )),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: Text(
+                    'Today activity',
+                    style: GoogleFonts.openSans(
+                        fontSize: 17, fontWeight: FontWeight.w700),
+                  ),
                 ),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  user.displayName ?? 'User',
-                  style: TextStyle(fontSize: 20),
-                )
+                Expanded(
+                    child: Divider(
+                  thickness: 1,
+                  color: Colors.grey[400],
+                ))
               ],
             ),
+          ),
+          Padding(padding: EdgeInsets.symmetric(vertical: 20),
+          child: Text("No activity today"),),
+          
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25.0),
+            child: Row(
+              children: [
+                Expanded(
+                    child: Divider(
+                  thickness: 1,
+                  color: Colors.grey[400],
+                )),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: Text(
+                    'Your groups',
+                    style: GoogleFonts.openSans(
+                        fontSize: 17, fontWeight: FontWeight.w700),
+                  ),
+                ),
+                Expanded(
+                    child: Divider(
+                  thickness: 1,
+                  color: Colors.grey[400],
+                ))
+              ],
+            ),
+          ),
+          SizedBox(height: 20,),
           Expanded(
             child: BlocBuilder<GroupBloc, GroupState>(
               builder: (context, state) {
                 if (state is GroupLoading) {
                   return Center(
-                      child:
-                          CircularProgressIndicator()); // Hiển thị vòng tròn tải
+                      child: LottieBuilder.asset(
+                    'assets/Lottie/loading.json',
+                    height: 200,
+                  ));
                 } else if (state is GroupLoaded) {
-                  // Hiển thị danh sách nhóm khi tải thành công
+                  if (state.groups.isEmpty) {
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [Text("Let's create a group!")],
+                    );
+                  }
                   return ListView.builder(
                     itemCount: state.groups.length,
                     itemBuilder: (context, index) {
                       final group = state.groups[index];
-                      return ListTile(
-                        title: Text(group['name']),
-                        subtitle: Text(group['description']),
-                        trailing: IconButton(
-                          icon: Icon(Icons.delete),
-                          onPressed: () {
-                            // Xóa nhóm
-                            BlocProvider.of<GroupBloc>(context)
-                                .add(DeleteGroup(group['id']));
-                          },
+                      final members = group['member'] as List<dynamic>;
+                      return CustomListTile(
+                        title: group['name'],
+                        leading: CircleAvatar(
+                          backgroundImage: NetworkImage(
+                              'https://i.pinimg.com/564x/0d/8b/5a/0d8b5a6f0f0b53c6e092a4133fed4fef.jpg'),
                         ),
+                        subtitle: group['description'],
+                        memberCount: (members.length > 1
+                            ? '${members.length} members'
+                            : '${members.length} member'),
                         onTap: () {
                           Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    GroupDetailScreen(groupId: group['id']),
-                              ));
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => GroupDetailScreen(
+                                groupId: group['id'],
+                              ),
+                            ),
+                          );
+                        },
+                        onDelete: () {
+                          BlocProvider.of<GroupBloc>(context)
+                              .add(DeleteGroup(group['id']));
                         },
                       );
                     },
@@ -105,11 +184,13 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton:Padding(padding: const EdgeInsets.fromLTRB(0,0,0,60),
+      child: FloatingActionButton(
+
         backgroundColor: Colors.blue[300],
         onPressed: () => _showCreateGroupDialog(context), // Tạo nhóm mới
         child: Icon(Icons.add),
-      ),
+      ),) 
     );
   }
 
