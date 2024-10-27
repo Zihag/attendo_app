@@ -34,17 +34,18 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       body: _screens[_selectedIndex],
       bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor: Colors.green[100]!,
+        backgroundColor: Colors.grey[300]!,
         items: [
-          Icon(Icons.timer),
-          Icon(Icons.notifications),
-          Icon(Icons.home),
-          Icon(Icons.person_4_rounded),
-          Icon(Icons.settings),
+          Icon(Icons.timer,color: Colors.grey[700],),
+          Icon(Icons.notifications,color: Colors.grey[700],),
+          Icon(Icons.home,color: Colors.grey[700],),
+          Icon(Icons.person_4_rounded,color: Colors.grey[700],),
+          Icon(Icons.settings,color: Colors.grey[700],),
         ],
         onTap: _onItemTapped,
         index: 2,
         animationDuration: Duration(milliseconds: 300),height: 60.0,
+        color: Colors.blue[200]!,
       ),
     );
   }

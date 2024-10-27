@@ -17,9 +17,9 @@ class HomeScreen extends StatelessWidget {
       if (user != null) context.read<GroupBloc>().add(LoadGroups());
     });
     return Scaffold(
-      backgroundColor: Colors.green[100],
+      backgroundColor: Colors.grey[300],
       appBar: AppBar(
-        backgroundColor: Colors.green[100],
+        backgroundColor: Colors.grey[300],
         title: Text('Home'),
         actions: [
           IconButton(
@@ -106,7 +106,7 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.green[50],
+        backgroundColor: Colors.blue[300],
         onPressed: () => _showCreateGroupDialog(context), // Tạo nhóm mới
         child: Icon(Icons.add),
       ),
