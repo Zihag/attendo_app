@@ -2,17 +2,17 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class CustomListTile extends StatelessWidget {
-  final Widget leading;
+class CustomGroupListTile extends StatelessWidget {
+  final Widget? leading;
   final String title;
   final String subtitle;
   final String memberCount;
   final Widget? trailing;
   final VoidCallback? onTap;
   final VoidCallback? onDelete;
-  const CustomListTile(
+  const CustomGroupListTile(
       {super.key,
-      required this.leading,
+      this.leading,
       required this.title,
       required this.subtitle,
       this.trailing,

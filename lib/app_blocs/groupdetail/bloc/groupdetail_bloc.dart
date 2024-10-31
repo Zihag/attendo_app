@@ -24,7 +24,7 @@ class GroupDetailBloc extends Bloc<GroupDetailEvent, GroupDetailState> {
         emit(GroupDetailError('Group not found'));
       }
     } catch (e){
-      emit(GroupDetailError('Failed to load group detials'));
+      emit(GroupDetailError('Failed to load group details'));
     }
   }
 }

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 part 'activity_event.dart';
@@ -25,15 +26,21 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
         emit(ActivityError('User not logged in'));
         return;
       }
+
+      String actTimeString  = "${event.actTime.hour}:${event.actTime.minute}";
+
       await _firebaseFirestore
           .collection('group')
           .doc(event.groupId)
           .collection('activities')
           .add({
         'name': event.activityName,
-        'description': event.description,
-        'startTime': event.startTime,
+        'description': event.description??"",
         'frequency': event.frequency,
+        'onceDate': event.onceDate,
+        'weeklyDate': event.weeklyDate,
+        'monthlyDate': event.monthlyDate,
+        'actTime':actTimeString,
         'createBy': user.uid,
         'create_at': FieldValue.serverTimestamp(),
       });
@@ -59,9 +66,12 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
           .map((doc) => {
                 'id': doc.id,
                 'name': doc['name'],
-                'description': doc['description'],
-                'startTime': (doc['startTime'] as Timestamp).toDate(),
+                'description': doc['description'] ?? '',
                 'frequency': doc['frequency'],
+                'onceDate': doc['onceDate'],
+                'weeklyDate':doc['weeklyDate'],
+                'monthlyDate':doc['monthlyDate'],
+                'actTime':doc['actTime'],
               })
           .toList();
 

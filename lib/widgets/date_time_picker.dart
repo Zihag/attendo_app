@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 
 class DateTimePickerWidget extends StatefulWidget {
-  final Function(DateTime, List<int>?) onDateTimeSelected; // Hàm callback trả về ngày và danh sách ngày tuần (nếu chọn weekly)
+  final Function(DateTime? date, List<int>? weekyDays, TimeOfDay time)
+      onDateTimeSelected; // Hàm callback trả về ngày và danh sách ngày tuần (nếu chọn weekly)
   final String frequency; // Chọn loại tần suất (once, daily, weekly, monthly)
 
-  DateTimePickerWidget({required this.onDateTimeSelected, required this.frequency});
+  DateTimePickerWidget({
+    required this.onDateTimeSelected,
+    required this.frequency,
+  });
 
   @override
   _DateTimePickerWidgetState createState() => _DateTimePickerWidgetState();
 }
 
 class _DateTimePickerWidgetState extends State<DateTimePickerWidget> {
-  DateTime? selectedDateTime;
+  DateTime? selectedDate;
   TimeOfDay? selectedTime;
-  List<int> selectedWeekDays = []; // Lưu trữ các ngày trong tuần đã chọn cho weekly
+  List<int> selectedWeekDays =
+      []; // Lưu trữ các ngày trong tuần đã chọn cho weekly
 
   // Hàm chọn ngày
   Future<void> _selectDate(BuildContext context) async {
@@ -25,12 +30,9 @@ class _DateTimePickerWidgetState extends State<DateTimePickerWidget> {
     );
     if (pickedDate != null) {
       setState(() {
-        selectedDateTime = pickedDate;
+        selectedDate = pickedDate;
       });
-      widget.onDateTimeSelected(
-        selectedDateTime!,
-        widget.frequency == 'weekly' ? selectedWeekDays : null,
-      );
+      _triggerCallBack();
     }
   }
 
@@ -43,20 +45,8 @@ class _DateTimePickerWidgetState extends State<DateTimePickerWidget> {
     if (pickedTime != null) {
       setState(() {
         selectedTime = pickedTime;
-        if (selectedDateTime != null) {
-          selectedDateTime = DateTime(
-            selectedDateTime!.year,
-            selectedDateTime!.month,
-            selectedDateTime!.day,
-            pickedTime.hour,
-            pickedTime.minute,
-          );
-        }
       });
-      widget.onDateTimeSelected(
-        selectedDateTime!,
-        widget.frequency == 'weekly' ? selectedWeekDays : null,
-      );
+      _triggerCallBack();
     }
   }
 
@@ -82,6 +72,16 @@ class _DateTimePickerWidgetState extends State<DateTimePickerWidget> {
     );
   }
 
+  void _triggerCallBack() {
+    widget.onDateTimeSelected(
+      widget.frequency == 'once' || widget.frequency == 'monthly'
+          ? selectedDate
+          : null,
+      widget.frequency == 'weekly' ? selectedWeekDays : null,
+      selectedTime ?? TimeOfDay.now(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -90,17 +90,18 @@ class _DateTimePickerWidgetState extends State<DateTimePickerWidget> {
           ElevatedButton(
             onPressed: () => _selectDate(context),
             child: Text(
-              selectedDateTime == null
+              selectedDate == null
                   ? 'Select Date'
-                  : '${selectedDateTime!.toLocal()}'.split(' ')[0],
+                  : '${selectedDate!.toLocal()}'.split(' ')[0],
             ),
           ),
         if (widget.frequency == 'weekly') _buildWeekDaySelector(),
         ElevatedButton(
           onPressed: () => _selectTime(context),
-          child: Text(selectedTime == null ? 'Select Time' : selectedTime!.format(context)),
+          child: Text(selectedTime == null
+              ? 'Select Time'
+              : selectedTime!.format(context)),
         ),
-        
       ],
     );
   }

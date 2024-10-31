@@ -1,12 +1,9 @@
-import 'dart:io';
-
 import 'package:attendo_app/app_blocs/group/bloc/group_bloc.dart';
 import 'package:attendo_app/screens/group/group_detail_screen.dart';
 import 'package:attendo_app/screens/authentication/login_screen.dart';
 import 'package:attendo_app/widgets/circle_avatar.dart';
-import 'package:attendo_app/widgets/custom_listtile.dart';
+import 'package:attendo_app/widgets/custom_group_listtile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -24,30 +21,9 @@ class HomeScreen extends StatelessWidget {
     });
     return Scaffold(
       backgroundColor: Colors.grey[300],
-      appBar: AppBar(
-        backgroundColor: Colors.grey[300],
-        title: Text('Home'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: () async {
-              bool confirmSignOut = await _showSignOutDialog(context);
-              if (confirmSignOut) {
-                await _googleSignIn.signOut();
-                print('Google sign out');
-                await FirebaseAuth.instance.signOut();
-                print('Firebase sign out');
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
-                );
-              }
-            },
-          ),
-        ],
-      ),
       body: Column(
         children: [
+        SizedBox(height: 35,),
           if (user != null)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25.0),
@@ -146,16 +122,14 @@ class HomeScreen extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final group = state.groups[index];
                       final members = group['member'] as List<dynamic>;
-                      return CustomListTile(
+                      return CustomGroupListTile(
                         title: group['name'],
                         leading: CircleAvatar(
                           backgroundImage: NetworkImage(
                               'https://i.pinimg.com/564x/0d/8b/5a/0d8b5a6f0f0b53c6e092a4133fed4fef.jpg'),
                         ),
                         subtitle: group['description'],
-                        memberCount: (members.length > 1
-                            ? '${members.length} members'
-                            : '${members.length} member'),
+                        memberCount: ('${members.length} member${members.length > 1 ? 's' : ''}'),
                         onTap: () {
                           Navigator.push(
                             context,

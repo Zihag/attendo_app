@@ -6,18 +6,23 @@ sealed class ActivityEvent {}
 final class CreateActivity extends ActivityEvent {
   final String groupId;
   final String activityName;
-  final String description;
-  final DateTime startTime;
   final String frequency;
-  final List<int>? weekDays;
+  final String? description;
+  final DateTime? onceDate;
+  final List<int>? weeklyDate;
+  final DateTime? monthlyDate;
+  final TimeOfDay actTime;
 
-  CreateActivity(
-      {required this.groupId,
-      required this.activityName,
-      required this.description,
-      required this.startTime,
-      required this.frequency,
-      this.weekDays, });
+  CreateActivity({
+    required this.groupId,
+    required this.activityName,
+    required this.frequency,
+    this.description,
+    this.onceDate,
+    this.weeklyDate,
+    this.monthlyDate,
+    required this.actTime,
+  });
 }
 
 final class LoadActivities extends ActivityEvent {
