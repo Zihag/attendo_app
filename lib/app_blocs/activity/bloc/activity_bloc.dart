@@ -19,7 +19,6 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
 
   FutureOr<void> _onCreateActivity(
       CreateActivity event, Emitter<ActivityState> emit) async {
-    emit(AcitvityLoading());
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user == null) {
@@ -27,7 +26,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
         return;
       }
 
-      String actTimeString  = "${event.actTime.hour}:${event.actTime.minute}";
+      String actTimeString = "${event.actTime.hour}:${event.actTime.minute}";
 
       await _firebaseFirestore
           .collection('group')
@@ -35,17 +34,16 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
           .collection('activities')
           .add({
         'name': event.activityName,
-        'description': event.description??"",
+        'description': event.description ?? "",
         'frequency': event.frequency,
         'onceDate': event.onceDate,
         'weeklyDate': event.weeklyDate,
         'monthlyDate': event.monthlyDate,
-        'actTime':actTimeString,
+        'actTime': actTimeString,
         'createBy': user.uid,
         'create_at': FieldValue.serverTimestamp(),
       });
       emit(ActivityCreatedSuccess());
-      add(LoadActivities(groupId: event.groupId));
     } catch (e) {
       emit(ActivityError('Failed to create activity'));
     }
@@ -53,7 +51,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
 
   FutureOr<void> _onLoadActivities(
       LoadActivities event, Emitter<ActivityState> emit) async {
-    emit(AcitvityLoading());
+    emit(ActivityLoading());
     try {
       final querySnapshot = await _firebaseFirestore
           .collection('group')
@@ -69,9 +67,9 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
                 'description': doc['description'] ?? '',
                 'frequency': doc['frequency'],
                 'onceDate': doc['onceDate'],
-                'weeklyDate':doc['weeklyDate'],
-                'monthlyDate':doc['monthlyDate'],
-                'actTime':doc['actTime'],
+                'weeklyDate': doc['weeklyDate'],
+                'monthlyDate': doc['monthlyDate'],
+                'actTime': doc['actTime'],
               })
           .toList();
 
@@ -84,7 +82,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
 
   FutureOr<void> _onDeleteActivity(
       DeleteActivity event, Emitter<ActivityState> emit) async {
-    emit(AcitvityLoading());
+    emit(ActivityLoading());
     try {
       await _firebaseFirestore
           .collection('group')

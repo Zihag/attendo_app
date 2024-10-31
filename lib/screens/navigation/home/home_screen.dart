@@ -23,7 +23,9 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: Colors.grey[300],
       body: Column(
         children: [
-        SizedBox(height: 35,),
+          SizedBox(
+            height: 35,
+          ),
           if (user != null)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25.0),
@@ -72,9 +74,10 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
           ),
-          Padding(padding: EdgeInsets.symmetric(vertical: 20),
-          child: Text("No activity today"),),
-          
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 20),
+            child: Text("No activity today"),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25.0),
             child: Row(
@@ -100,7 +103,9 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 20,),
+          SizedBox(
+            height: 20,
+          ),
           Expanded(
             child: BlocBuilder<GroupBloc, GroupState>(
               builder: (context, state) {
@@ -120,6 +125,9 @@ class HomeScreen extends StatelessWidget {
                   return ListView.builder(
                     itemCount: state.groups.length,
                     itemBuilder: (context, index) {
+                      if (index == state.groups.length){
+                        SizedBox(height: 100,);
+                      }
                       final group = state.groups[index];
                       final members = group['member'] as List<dynamic>;
                       return CustomGroupListTile(
@@ -129,7 +137,8 @@ class HomeScreen extends StatelessWidget {
                               'https://i.pinimg.com/564x/0d/8b/5a/0d8b5a6f0f0b53c6e092a4133fed4fef.jpg'),
                         ),
                         subtitle: group['description'],
-                        memberCount: ('${members.length} member${members.length > 1 ? 's' : ''}'),
+                        memberCount:
+                            ('${members.length} member${members.length > 1 ? 's' : ''}'),
                         onTap: () {
                           Navigator.push(
                             context,
@@ -158,13 +167,14 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      floatingActionButton:Padding(padding: const EdgeInsets.fromLTRB(0,0,0,60),
-      child: FloatingActionButton(
-
-        backgroundColor: Colors.blue[300],
-        onPressed: () => _showCreateGroupDialog(context), // Tạo nhóm mới
-        child: Icon(Icons.add),
-      ),) 
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 60),
+        child: FloatingActionButton(
+          backgroundColor: Colors.blue[300],
+          onPressed: () => _showCreateGroupDialog(context), // Tạo nhóm mới
+          child: Icon(Icons.add),
+        ),
+      ),
     );
   }
 

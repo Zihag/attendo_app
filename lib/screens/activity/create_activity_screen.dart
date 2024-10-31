@@ -49,12 +49,12 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
         listener: (context, state) {
           if (state is ActivityCreatedSuccess) {
             print('Create successful');
-            Navigator.pushReplacement(
+            Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => GroupDetailScreen(
-                          groupId: widget.groupId,
-                        )));
+                    builder: (context) =>
+                        GroupDetailScreen(groupId: widget.groupId)),
+                (Route<dynamic> route) => route.isFirst);
           } else if (state is ActivityError) {
             print('Create error');
             ScaffoldMessenger.of(context)
@@ -105,20 +105,24 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                 onPressed: () {
                   if (activityNameController.text.isNotEmpty &&
                       selectedTime != null) {
-                    BlocProvider.of<ActivityBloc>(context).add(CreateActivity(
-                        groupId: widget.groupId,
-                        activityName: activityNameController.text,
-                        frequency: frequency,
-                        description:
-                            activityDescriptionController.text.isNotEmpty
-                                ? activityDescriptionController.text
-                                : null,
-                        onceDate: frequency == 'Once' ? selectedOnceDate : null,
-                        weeklyDate:
-                            frequency == 'Weekly' ? selectedWeekDays : null,
-                        monthlyDate:
-                            frequency == 'Monthly' ? selectedMonthlyDate : null,
-                        actTime: selectedTime!));
+                    BlocProvider.of<ActivityBloc>(context).add(
+                      CreateActivity(
+                          groupId: widget.groupId,
+                          activityName: activityNameController.text,
+                          frequency: frequency,
+                          description:
+                              activityDescriptionController.text.isNotEmpty
+                                  ? activityDescriptionController.text
+                                  : null,
+                          onceDate:
+                              frequency == 'Once' ? selectedOnceDate : null,
+                          weeklyDate:
+                              frequency == 'Weekly' ? selectedWeekDays : null,
+                          monthlyDate: frequency == 'Monthly'
+                              ? selectedMonthlyDate
+                              : null,
+                          actTime: selectedTime!),
+                    );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Please complete all fields.')),

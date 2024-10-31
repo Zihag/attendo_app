@@ -5,7 +5,7 @@ sealed class ActivityState {}
 
 final class ActivityInitial extends ActivityState {}
 
-final class AcitvityLoading extends ActivityState{}
+final class ActivityLoading extends ActivityState{}
 
 final class ActivityLoaded extends ActivityState{
   final List<Map<String,dynamic>> activities;
