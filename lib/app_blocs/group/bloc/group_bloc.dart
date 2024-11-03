@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:attendo_app/services/today_activity_service.dart';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -25,7 +26,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
         emit(GroupError('User not logged in'));
         return;
       }
-      await _firestore.collection('group').add({
+      await _firestore.collection('groups').add({
         'name':event.groupName,
         'description':event.groupDescription,
         'member':[{
@@ -45,7 +46,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     try {
       String userId = await FirebaseAuth.instance.currentUser?.uid??'';
       print(userId);
-      final querySnapshot = await _firestore.collection('group').where('member',arrayContains: {'userId':userId}).get();
+      final querySnapshot = await _firestore.collection('groups').where('member',arrayContains: {'userId':userId}).get();
       final groups = querySnapshot.docs.map((doc) => {
         'id': doc.id,
         'name':doc['name'],
@@ -62,10 +63,12 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
   FutureOr<void> _onDeleteGroup(DeleteGroup event, Emitter<GroupState> emit) async {
     emit(GroupLoading());
     try{
-      await _firestore.collection('group').doc(event.groupId).delete();
+      await _firestore.collection('groups').doc(event.groupId).delete();
       add(LoadGroups());
     } catch(e){
       emit(GroupError("Failed to delete group"));
     }
   }
+
+  
 }

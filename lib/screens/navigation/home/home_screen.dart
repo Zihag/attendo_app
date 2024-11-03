@@ -1,8 +1,10 @@
 import 'package:attendo_app/app_blocs/group/bloc/group_bloc.dart';
+import 'package:attendo_app/app_blocs/today_activity/bloc/today_activity_bloc.dart';
 import 'package:attendo_app/screens/group/group_detail_screen.dart';
 import 'package:attendo_app/screens/authentication/login_screen.dart';
 import 'package:attendo_app/widgets/circle_avatar.dart';
 import 'package:attendo_app/widgets/custom_group_listtile.dart';
+import 'package:attendo_app/widgets/today_activity_listtile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,7 +19,10 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      if (user != null) context.read<GroupBloc>().add(LoadGroups());
+      if (user != null) {
+        context.read<GroupBloc>().add(LoadGroups());
+        context.read<TodayActivityBloc>().add(LoadTodayActivities());
+      }
     });
     return Scaffold(
       backgroundColor: Colors.grey[300],
@@ -37,10 +42,12 @@ class HomeScreen extends StatelessWidget {
                     children: [
                       Text('Hello, ',
                           style: GoogleFonts.openSans(
-                              fontSize: 20, fontWeight: FontWeight.w700)),
+                              fontSize: 16, fontWeight: FontWeight.w700)),
                       Text(user.displayName ?? 'User',
                           style: GoogleFonts.openSans(
-                              fontSize: 20, fontWeight: FontWeight.w700)),
+                              fontSize: 16, fontWeight: FontWeight.w700),
+                              overflow: TextOverflow.ellipsis,
+                              ),
                     ],
                   ),
                   CustomCircleAvatar(
@@ -74,9 +81,52 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 20),
-            child: Text("No activity today"),
+          BlocListener<TodayActivityBloc, TodayActivityState>(
+            listener: (context, state) {
+              if(state is TodayActivityError){
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+              }
+            },
+            child: SizedBox(
+              height: 200,
+                child: BlocBuilder<TodayActivityBloc, TodayActivityState>(
+              builder: (context, state) {
+                if (state is TodayActivityLoading) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (state is TodayActivityLoaded) {
+                  if(state.activities.isEmpty){
+                    return Center(child: Text('No activities today...'),);
+                  }
+                  final activities = state.activities;
+
+                  return ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: activities.length,
+                    itemBuilder: (context, index) {
+                      final activity = activities[index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: TodayActivityListtile(
+                          activityName: activity['activityName'],
+                          groupName: activity['groupName'],
+                          time: activity['actTime'],
+                        ),
+                      );
+                    },
+                  );
+                } else if (state is TodayActivityError) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  return Center(
+                    child: Text('No activities for today'),
+                  );
+                }
+              },
+            )),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25.0),
@@ -123,11 +173,9 @@ class HomeScreen extends StatelessWidget {
                     );
                   }
                   return ListView.builder(
+                    padding: EdgeInsets.only(bottom: 80),
                     itemCount: state.groups.length,
                     itemBuilder: (context, index) {
-                      if (index == state.groups.length){
-                        SizedBox(height: 100,);
-                      }
                       final group = state.groups[index];
                       final members = group['member'] as List<dynamic>;
                       return CustomGroupListTile(

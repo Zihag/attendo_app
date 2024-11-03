@@ -1,3 +1,4 @@
+import 'package:attendo_app/app_blocs/today_activity/bloc/today_activity_bloc.dart';
 import 'package:attendo_app/screens/group/group_detail_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -48,6 +49,10 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
       body: BlocListener<ActivityBloc, ActivityState>(
         listener: (context, state) {
           if (state is ActivityCreatedSuccess) {
+
+            //Call reload today activity in Home screen
+            context.read<TodayActivityBloc>().add(LoadTodayActivities());
+
             print('Create successful');
             Navigator.pushAndRemoveUntil(
                 context,

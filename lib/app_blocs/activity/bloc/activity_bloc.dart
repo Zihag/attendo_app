@@ -29,7 +29,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
       String actTimeString = "${event.actTime.hour}:${event.actTime.minute}";
 
       await _firebaseFirestore
-          .collection('group')
+          .collection('groups')
           .doc(event.groupId)
           .collection('activities')
           .add({
@@ -54,7 +54,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
     emit(ActivityLoading());
     try {
       final querySnapshot = await _firebaseFirestore
-          .collection('group')
+          .collection('groups')
           .doc(event.groupId)
           .collection('activities')
           .orderBy('create_at', descending: true)
@@ -85,7 +85,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
     emit(ActivityLoading());
     try {
       await _firebaseFirestore
-          .collection('group')
+          .collection('groups')
           .doc(event.groupId)
           .collection('activities')
           .doc(event.activityId)

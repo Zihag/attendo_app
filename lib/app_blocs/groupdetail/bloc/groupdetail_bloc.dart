@@ -17,7 +17,7 @@ class GroupDetailBloc extends Bloc<GroupDetailEvent, GroupDetailState> {
   FutureOr<void> _onLoadGroupDetail(LoadGroupDetail event, Emitter<GroupDetailState> emit) async {
     emit(GroupDetailLoading());
     try {
-      final docSnapshot = await _firebaseFirestore.collection('group').doc(event.groupid).get();
+      final docSnapshot = await _firebaseFirestore.collection('groups').doc(event.groupid).get();
       if(docSnapshot.exists){
         emit(GroupDetailLoaded(docSnapshot.data()!));
       } else {
