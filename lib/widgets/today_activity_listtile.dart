@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class TodayActivityListtile extends StatelessWidget {
+class TodayActivityListTile extends StatelessWidget {
   final String activityName;
   final String groupName;
   final String time;
   final VoidCallback? onYes;
   final VoidCallback? onNo;
-  const TodayActivityListtile({
+  const TodayActivityListTile({
     super.key,
     required this.activityName,
     required this.groupName,
@@ -35,9 +35,16 @@ class TodayActivityListtile extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text(
+              time,
+              style: GoogleFonts.openSans(
+                  fontSize: 30,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold),
+            ),
             Text(
               activityName,
               style: GoogleFonts.openSans(
@@ -46,41 +53,43 @@ class TodayActivityListtile extends StatelessWidget {
               ),
               overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(
-              height: 5,
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Container(
+                  width: 70,
+                  decoration: BoxDecoration(
+                      color: Colors.blue[200],
+                      borderRadius: BorderRadius.circular(30)),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Daily',
+                        style: GoogleFonts.openSans(
+                            fontSize: 10,
+                            color: Colors.grey[700],
+                            fontWeight: FontWeight.bold),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  )),
             ),
+            SizedBox(height: 10,),
+            Row(
+              children: [
+                CircleAvatar(
+              backgroundImage: NetworkImage(
+                  'https://i.pinimg.com/564x/3c/6e/49/3c6e499eedf2eee062a3f0cc095e11a7.jpg'),
+            ),
+            SizedBox(width: 5,),
             Text(
               groupName,
               style:
-                  GoogleFonts.openSans(fontSize: 14, color: Colors.grey[700]),
+                  GoogleFonts.openSans(fontSize: 12, color: Colors.black, fontWeight: FontWeight.bold),
               overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(
-              height: 5,
-            ),
-            Text(
-              time,
-              style:
-                  GoogleFonts.openSans(fontSize: 13, color: Colors.grey[600]),
-            ),
-            const Spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                    onPressed: onYes,
-                    icon: const Icon(
-                      Icons.check_circle_outline,
-                      color: Colors.green,
-                    )),
-                IconButton(
-                    onPressed: onNo,
-                    icon: const Icon(
-                      Icons.close,
-                      color: Colors.red,
-                    )),
               ],
-            )
+            ),
           ],
         ),
       ),

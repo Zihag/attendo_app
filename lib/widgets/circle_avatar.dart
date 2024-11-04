@@ -24,9 +24,9 @@ class CustomCircleAvatar extends StatelessWidget {
         backgroundColor: Colors.white,
         child: CircleAvatar(
           backgroundImage: NetworkImage(photoURL),
-          radius: 30,
+          radius: 23,
         ),
-        radius: 35,
+        radius: 27,
       ),
     );
   }

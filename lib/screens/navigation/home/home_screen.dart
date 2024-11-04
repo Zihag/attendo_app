@@ -35,24 +35,28 @@ class HomeScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  CustomCircleAvatar(
+                      photoURL:
+                          user.photoURL ?? 'https://via.placeholder.com/150'),
+                  SizedBox(
+                    width: 10,
+                  ),
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text('Hello, ',
                           style: GoogleFonts.openSans(
                               fontSize: 16, fontWeight: FontWeight.w700)),
-                      Text(user.displayName ?? 'User',
-                          style: GoogleFonts.openSans(
-                              fontSize: 16, fontWeight: FontWeight.w700),
-                              overflow: TextOverflow.ellipsis,
-                              ),
+                      Text(
+                        user.displayName ?? 'User',
+                        style: GoogleFonts.openSans(
+                            fontSize: 16, fontWeight: FontWeight.w700),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ],
                   ),
-                  CustomCircleAvatar(
-                      photoURL:
-                          user.photoURL ?? 'https://via.placeholder.com/150'),
                 ],
               ),
             ),
@@ -81,52 +85,64 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
           ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 25),
+                child: Text('Are you joining them today?'),
+              ),
+            ],
+          ),
           BlocListener<TodayActivityBloc, TodayActivityState>(
             listener: (context, state) {
-              if(state is TodayActivityError){
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+              if (state is TodayActivityError) {
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(state.message)));
               }
             },
             child: SizedBox(
-              height: 200,
+                height: 220,
                 child: BlocBuilder<TodayActivityBloc, TodayActivityState>(
-              builder: (context, state) {
-                if (state is TodayActivityLoading) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (state is TodayActivityLoaded) {
-                  if(state.activities.isEmpty){
-                    return Center(child: Text('No activities today...'),);
-                  }
-                  final activities = state.activities;
-
-                  return ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: activities.length,
-                    itemBuilder: (context, index) {
-                      final activity = activities[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        child: TodayActivityListtile(
-                          activityName: activity['activityName'],
-                          groupName: activity['groupName'],
-                          time: activity['actTime'],
-                        ),
+                  builder: (context, state) {
+                    if (state is TodayActivityLoading) {
+                      return Center(
+                        child: CircularProgressIndicator(),
                       );
-                    },
-                  );
-                } else if (state is TodayActivityError) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else {
-                  return Center(
-                    child: Text('No activities for today'),
-                  );
-                }
-              },
-            )),
+                    } else if (state is TodayActivityLoaded) {
+                      if (state.activities.isEmpty) {
+                        return Center(
+                          child: Text('No activities today...'),
+                        );
+                      }
+                      final activities = state.activities;
+
+                      return ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: activities.length,
+                        itemBuilder: (context, index) {
+                          final activity = activities[index];
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: TodayActivityListTile(
+                              activityName: activity['activityName'],
+                              groupName: activity['groupName'],
+                              time: activity['actTime'],
+                            ),
+                          );
+                        },
+                      );
+                    } else if (state is TodayActivityError) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else {
+                      return Center(
+                        child: Text('No activities for today'),
+                      );
+                    }
+                  },
+                )),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25.0),
