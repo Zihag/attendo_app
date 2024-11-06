@@ -1,3 +1,4 @@
+import 'package:attendo_app/app_blocs/app_colors/app_colors.dart';
 import 'package:attendo_app/screens/authentication/login_screen.dart';
 import 'package:attendo_app/screens/main_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -22,7 +23,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue,
+      backgroundColor: AppColors.cyan,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

@@ -64,6 +64,7 @@ class TodayActivityService {
             'activityName': activityData['name'],
             'groupName': groupName,
             'actTime': actTime,
+            'frequency': activityData['frequency']
           });
         }
       }

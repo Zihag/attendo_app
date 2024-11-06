@@ -1,3 +1,4 @@
+import 'package:attendo_app/app_blocs/app_colors/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class MyButton extends StatelessWidget {
@@ -15,7 +16,7 @@ class MyButton extends StatelessWidget {
         height: height,
         margin: const EdgeInsets.symmetric(horizontal: 25),
         decoration: BoxDecoration(
-            color: Colors.blue, borderRadius: BorderRadius.circular(8)),
+            color: AppColors.cyan, borderRadius: BorderRadius.circular(8)),
         child: Center(
           child: Text(
             text,

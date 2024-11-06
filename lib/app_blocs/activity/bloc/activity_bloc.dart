@@ -26,7 +26,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
         return;
       }
 
-      String actTimeString = "${event.actTime.hour}:${event.actTime.minute}";
+      String actTimeString = "${event.actTime.hour.toString().padLeft(2,'0')}:${event.actTime.minute.toString().padLeft(2,'0')}";
 
       await _firebaseFirestore
           .collection('groups')

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class TodayActivityListTile extends StatelessWidget {
   final String activityName;
   final String groupName;
   final String time;
+  final String frequency;
   final VoidCallback? onYes;
   final VoidCallback? onNo;
   const TodayActivityListTile({
@@ -14,82 +16,130 @@ class TodayActivityListTile extends StatelessWidget {
     required this.time,
     this.onYes,
     this.onNo,
+    required this.frequency,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      width: 160,
-      height: 120,
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(15),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                spreadRadius: 0.5,
-                blurRadius: 20,
-                offset: const Offset(0, 4))
-          ]),
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Container(
+        width: 300,
+        child: Stack(
           children: [
-            Text(
-              time,
-              style: GoogleFonts.openSans(
-                  fontSize: 30,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold),
-            ),
-            Text(
-              activityName,
-              style: GoogleFonts.openSans(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
+            Positioned.fill(
+              child: SvgPicture.asset(
+                'assets/vector/today_act_tile.svg',
+                fit: BoxFit.contain,
               ),
-              overflow: TextOverflow.ellipsis,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Container(
-                  width: 70,
-                  decoration: BoxDecoration(
-                      color: Colors.blue[200],
-                      borderRadius: BorderRadius.circular(30)),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 13, 0, 0),
+                  child: Row(
                     children: [
-                      Text(
-                        'Daily',
-                        style: GoogleFonts.openSans(
-                            fontSize: 10,
-                            color: Colors.grey[700],
-                            fontWeight: FontWeight.bold),
-                        overflow: TextOverflow.ellipsis,
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                            groupName,
+                            style: GoogleFonts.openSans(
+                                fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 68),
+                        child: CircleAvatar(
+                          backgroundImage: NetworkImage(
+                              'https://i.pinimg.com/564x/3c/6e/49/3c6e499eedf2eee062a3f0cc095e11a7.jpg'),
+                        ),
                       ),
                     ],
-                  )),
-            ),
-            SizedBox(height: 10,),
-            Row(
-              children: [
-                CircleAvatar(
-              backgroundImage: NetworkImage(
-                  'https://i.pinimg.com/564x/3c/6e/49/3c6e499eedf2eee062a3f0cc095e11a7.jpg'),
-            ),
-            SizedBox(width: 5,),
-            Text(
-              groupName,
-              style:
-                  GoogleFonts.openSans(fontSize: 12, color: Colors.black, fontWeight: FontWeight.bold),
-              overflow: TextOverflow.ellipsis,
-            ),
+                  ),
+                ),
+                SizedBox(
+                  height: 25,
+                ),
+                Row(
+                  children: [
+                    Column(
+                      children: [
+                        Text(
+                          time,
+                          style: GoogleFonts.openSans(
+                            fontSize: 50,
+                            fontWeight: FontWeight.bold,
+                            height: 1,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 170,
+                          child: Center(
+                            child: Text(
+                              activityName,
+                              style: GoogleFonts.openSans(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 7,
+                        ),
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/vector/frequency_tag.svg',
+                              height: 15,
+                            ),
+                            Text(
+                              frequency,
+                              style: GoogleFonts.openSans(
+                                  fontSize: 10, fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Column(
+                      children: [
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/vector/yes_button.svg',
+                              width: 80,
+                            ),
+                            Text('Yes')
+                          ],
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/vector/no_button.svg',
+                              width: 80,
+                            ),
+                            Text('No')
+                          ],
+                        )
+                      ],
+                    )
+                  ],
+                ),
               ],
-            ),
+            )
           ],
         ),
       ),

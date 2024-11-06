@@ -1,3 +1,4 @@
+import 'package:attendo_app/app_blocs/app_colors/app_colors.dart';
 import 'package:attendo_app/app_blocs/group/bloc/group_bloc.dart';
 import 'package:attendo_app/app_blocs/today_activity/bloc/today_activity_bloc.dart';
 import 'package:attendo_app/screens/group/group_detail_screen.dart';
@@ -5,9 +6,11 @@ import 'package:attendo_app/screens/authentication/login_screen.dart';
 import 'package:attendo_app/widgets/circle_avatar.dart';
 import 'package:attendo_app/widgets/custom_group_listtile.dart';
 import 'package:attendo_app/widgets/today_activity_listtile.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lottie/lottie.dart';
@@ -35,7 +38,6 @@ class HomeScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   CustomCircleAvatar(
                       photoURL:
@@ -57,20 +59,23 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ],
                   ),
+                  Spacer(),
+                  SvgPicture.asset(
+                    'assets/vector/noti_icon.svg',
+                    height: 30,
+                  )
                 ],
               ),
             ),
+          SizedBox(
+            height: 20,
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25.0),
             child: Row(
               children: [
-                Expanded(
-                    child: Divider(
-                  thickness: 1,
-                  color: Colors.grey[400],
-                )),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  padding: const EdgeInsets.only(right: 10),
                   child: Text(
                     'Today activity',
                     style: GoogleFonts.openSans(
@@ -128,6 +133,7 @@ class HomeScreen extends StatelessWidget {
                               activityName: activity['activityName'],
                               groupName: activity['groupName'],
                               time: activity['actTime'],
+                              frequency: activity['frequency'],
                             ),
                           );
                         },
@@ -148,13 +154,8 @@ class HomeScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 25.0),
             child: Row(
               children: [
-                Expanded(
-                    child: Divider(
-                  thickness: 1,
-                  color: Colors.grey[400],
-                )),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  padding: const EdgeInsets.only(right: 10.0),
                   child: Text(
                     'Your groups',
                     style: GoogleFonts.openSans(
@@ -194,15 +195,22 @@ class HomeScreen extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final group = state.groups[index];
                       final members = group['member'] as List<dynamic>;
-                      return CustomGroupListTile(
+
+                      return FutureBuilder(future: FirebaseFirestore.instance.collection('groups')
+                      .doc(group['id'])
+                      .collection('activities')
+                      .get(), builder: (context,snapshot){
+                        final actCount = snapshot.data?.docs.length??0;
+                        return CustomGroupListTile(
                         title: group['name'],
-                        leading: CircleAvatar(
+                        avatar: CircleAvatar(
                           backgroundImage: NetworkImage(
                               'https://i.pinimg.com/564x/0d/8b/5a/0d8b5a6f0f0b53c6e092a4133fed4fef.jpg'),
                         ),
-                        subtitle: group['description'],
+                        description: group['description'],
                         memberCount:
                             ('${members.length} member${members.length > 1 ? 's' : ''}'),
+                        actCount: ('${actCount} activity'),
                         onTap: () {
                           Navigator.push(
                             context,
@@ -218,6 +226,8 @@ class HomeScreen extends StatelessWidget {
                               .add(DeleteGroup(group['id']));
                         },
                       );
+                      });
+                      
                     },
                   );
                 } else if (state is GroupError) {
@@ -234,7 +244,7 @@ class HomeScreen extends StatelessWidget {
       floatingActionButton: Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 0, 60),
         child: FloatingActionButton(
-          backgroundColor: Colors.blue[300],
+          backgroundColor: AppColors.cyan,
           onPressed: () => _showCreateGroupDialog(context), // Tạo nhóm mới
           child: Icon(Icons.add),
         ),

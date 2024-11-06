@@ -55,13 +55,14 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         home: SplashScreen(),
         theme: _buildTheme(Brightness.light),
+        
       ),
     );
   }
 }
 
 ThemeData _buildTheme(brightness) {
-  var baseTheme = ThemeData(brightness: brightness);
+  var baseTheme = ThemeData(brightness: brightness, colorSchemeSeed: Colors.cyan);
 
   return baseTheme.copyWith(
       textTheme: GoogleFonts.openSansTextTheme(baseTheme.textTheme));

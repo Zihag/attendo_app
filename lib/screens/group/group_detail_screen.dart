@@ -37,6 +37,9 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
       ],
       child: Scaffold(
         appBar: AppBar(
+          //Remove padding between leading icon and text
+          titleSpacing: 0,
+
           backgroundColor: Colors.blue[200],
           title: BlocBuilder<GroupDetailBloc, GroupDetailState>(
             builder: (context, state) {
@@ -45,21 +48,34 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
               } else if (state is GroupDetailLoaded) {
                 final members = state.groupData['member'] as List<dynamic>?;
                 final memberCount = members?.length ?? 0;
-                return Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '${state.groupData['name'] ?? 'Unknown'}',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: NetworkImage(
+                        'https://i.pinimg.com/564x/e2/dc/3c/e2dc3cb5cb84093a9496f21ba5cc6743.jpg',
                       ),
-                      Text(
-                        '$memberCount member${memberCount == 1 ? '' : 's'}',
-                        style: TextStyle(fontSize: 13),
-                      )
-                    ],
-                  ),
+                    ),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '${state.groupData['name'] ?? 'Unknown'}',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          '$memberCount member${memberCount == 1 ? '' : 's'}',
+                          style: TextStyle(fontSize: 12),
+                        )
+                      ],
+                    ),
+                  ],
                 );
               } else if (state is GroupDetailError) {
                 return Center(child: Text(state.message));
@@ -76,7 +92,16 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                           builder: (context) =>
                               InviteScreen(groupId: widget.groupId)));
                 },
-                icon: Icon(Icons.share))
+                icon: Icon(Icons.share)),
+            IconButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              InviteScreen(groupId: widget.groupId)));
+                },
+                icon: Icon(Icons.info))
           ],
         ),
         body: BlocListener<ActivityBloc, ActivityState>(
