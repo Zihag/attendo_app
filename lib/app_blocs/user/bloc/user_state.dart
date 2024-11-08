@@ -11,6 +11,9 @@ class UserLoaded extends UserState {
   final Map<String, dynamic> userData;
 
   UserLoaded(this.userData);
+
+  String get displayName => userData['displayName'] ?? '';
+  String get username => userData['username'] ?? 'User';
 }
 
 class UserError extends UserState{

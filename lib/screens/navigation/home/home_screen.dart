@@ -1,8 +1,8 @@
 import 'package:attendo_app/app_blocs/app_colors/app_colors.dart';
 import 'package:attendo_app/app_blocs/group/bloc/group_bloc.dart';
 import 'package:attendo_app/app_blocs/today_activity/bloc/today_activity_bloc.dart';
+import 'package:attendo_app/app_blocs/user/bloc/user_bloc.dart';
 import 'package:attendo_app/screens/group/group_detail_screen.dart';
-import 'package:attendo_app/screens/authentication/login_screen.dart';
 import 'package:attendo_app/widgets/circle_avatar.dart';
 import 'package:attendo_app/widgets/custom_group_listtile.dart';
 import 'package:attendo_app/widgets/today_activity_listtile.dart';
@@ -25,6 +25,7 @@ class HomeScreen extends StatelessWidget {
       if (user != null) {
         context.read<GroupBloc>().add(LoadGroups());
         context.read<TodayActivityBloc>().add(LoadTodayActivities());
+        context.read<UserBloc>().add(FetchUserData(user.uid));
       }
     });
     return Scaffold(
@@ -40,8 +41,8 @@ class HomeScreen extends StatelessWidget {
               child: Row(
                 children: [
                   CustomCircleAvatar(
-                      photoURL:
-                          user.photoURL ?? 'https://via.placeholder.com/150'),
+                      photoURL: user.photoURL ??
+                          'https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg'),
                   SizedBox(
                     width: 10,
                   ),
@@ -51,11 +52,22 @@ class HomeScreen extends StatelessWidget {
                       Text('Hello, ',
                           style: GoogleFonts.openSans(
                               fontSize: 16, fontWeight: FontWeight.w700)),
-                      Text(
-                        user.displayName ?? 'User',
-                        style: GoogleFonts.openSans(
-                            fontSize: 16, fontWeight: FontWeight.w700),
-                        overflow: TextOverflow.ellipsis,
+                      BlocBuilder<UserBloc, UserState>(
+                        builder: (context, state) {
+                          if (state is UserLoaded) {
+                            return Text(
+                              state.username,
+                              style: GoogleFonts.openSans(
+                                  fontSize: 16, fontWeight: FontWeight.w700),
+                              overflow: TextOverflow.ellipsis,
+                            );
+                          } else if (state is UserLoading){
+                            return CircularProgressIndicator();
+                          } else if (state is UserError){
+                            return Text(state.error);
+                          }
+                          return Text('User not found');
+                        },
                       ),
                     ],
                   ),
@@ -196,38 +208,40 @@ class HomeScreen extends StatelessWidget {
                       final group = state.groups[index];
                       final members = group['member'] as List<dynamic>;
 
-                      return FutureBuilder(future: FirebaseFirestore.instance.collection('groups')
-                      .doc(group['id'])
-                      .collection('activities')
-                      .get(), builder: (context,snapshot){
-                        final actCount = snapshot.data?.docs.length??0;
-                        return CustomGroupListTile(
-                        title: group['name'],
-                        avatar: CircleAvatar(
-                          backgroundImage: NetworkImage(
-                              'https://i.pinimg.com/564x/0d/8b/5a/0d8b5a6f0f0b53c6e092a4133fed4fef.jpg'),
-                        ),
-                        description: group['description'],
-                        memberCount:
-                            ('${members.length} member${members.length > 1 ? 's' : ''}'),
-                        actCount: ('${actCount} activity'),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => GroupDetailScreen(
-                                groupId: group['id'],
+                      return FutureBuilder(
+                          future: FirebaseFirestore.instance
+                              .collection('groups')
+                              .doc(group['id'])
+                              .collection('activities')
+                              .get(),
+                          builder: (context, snapshot) {
+                            final actCount = snapshot.data?.docs.length ?? 0;
+                            return CustomGroupListTile(
+                              title: group['name'],
+                              avatar: CircleAvatar(
+                                backgroundImage: NetworkImage(
+                                    'https://i.pinimg.com/564x/0d/8b/5a/0d8b5a6f0f0b53c6e092a4133fed4fef.jpg'),
                               ),
-                            ),
-                          );
-                        },
-                        onDelete: () {
-                          BlocProvider.of<GroupBloc>(context)
-                              .add(DeleteGroup(group['id']));
-                        },
-                      );
-                      });
-                      
+                              description: group['description'],
+                              memberCount:
+                                  ('${members.length} member${members.length > 1 ? 's' : ''}'),
+                              actCount: ('${actCount} activity'),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => GroupDetailScreen(
+                                      groupId: group['id'],
+                                    ),
+                                  ),
+                                );
+                              },
+                              onDelete: () {
+                                BlocProvider.of<GroupBloc>(context)
+                                    .add(DeleteGroup(group['id']));
+                              },
+                            );
+                          });
                     },
                   );
                 } else if (state is GroupError) {

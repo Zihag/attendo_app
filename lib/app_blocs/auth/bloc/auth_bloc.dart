@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:attendo_app/services/username_generator.dart';
+import 'package:attendo_app/services/username_service.dart';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,7 +14,8 @@ part 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final FirebaseAuth _firebaseAuth;
   final FirebaseFirestore _firebaseFirestore;
-  AuthBloc(this._firebaseAuth, this._firebaseFirestore) : super(AuthInitial()) {
+  final UsernameService _usernameService;
+  AuthBloc(this._firebaseAuth, this._firebaseFirestore, this._usernameService) : super(AuthInitial()) {
     on<SignInEvent>(_onSignIn);
     on<SignUpEvent>(_onSignUp);
     on<GoogleSignInEvent>(_onGoogleSignIn);
@@ -53,12 +56,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   FutureOr<void> _onSignUp(SignUpEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
+      bool isUsernameExisted = await _usernameService.isUsernameTaken(event.username);
+      if(isUsernameExisted){
+        emit(AuthSignInError('Username already existed'));
+        return;
+      } 
       UserCredential userCredential =
           await _firebaseAuth.createUserWithEmailAndPassword(
               email: event.email, password: event.password);
       await userCredential.user?.sendEmailVerification();
       if (userCredential.user != null) {
-        await _createUserInFireStore(userCredential.user!);
+        await _createUserInFireStore(userCredential.user!, event.username);
       }
       emit(AuthSignUpSuccess());
     } on FirebaseAuthException catch (e) {
@@ -101,11 +109,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
+
       UserCredential userCredential =
           await _firebaseAuth.signInWithCredential(authCredential);
       User? user = userCredential.user;
       if (user != null) {
-        await _createUserInFireStore(user);
+
+        //create random username
+        final baseName = user.displayName?? user.email?.split('@')[0] ?? 'user';
+        final username = await UsernameGenerator().generateUsername(baseName);
+
+        await _createUserInFireStore(user,username);
       }
       await _firebaseAuth.signInWithCredential(authCredential);
 
@@ -115,12 +129,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  Future<void> _createUserInFireStore(User user) async {
+  Future<void> _createUserInFireStore(User user, String username) async {
     final userRef =
         FirebaseFirestore.instance.collection('users').doc(user.uid);
     await userRef.set(({
       'uid': user.uid,
       'email': user.email,
+      'username': username,
       'created_at': FieldValue.serverTimestamp(),
       'displayName': user.displayName,
       'photoUrl': user.photoURL,

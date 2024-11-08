@@ -15,11 +15,13 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
   bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.grey[300],
         iconTheme: IconThemeData(
@@ -88,7 +90,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   autoFocus: false,
                 ),
                 SizedBox(
-                  height: 10,
+                  height: 20,
+                ),
+                MyTextField(
+                  hintText: 'Username',
+                  obscureText: false,
+                  controller: _usernameController,
+                  autoFocus: false,
+                ),
+                SizedBox(
+                  height: 20,
                 ),
                 MyTextField(
                   hintText: 'Password',
@@ -105,7 +116,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       return MyButton(
                         onTap: () {
                           context.read<AuthBloc>().add(SignUpEvent(
-                              _emailController.text, _passwordController.text));
+                              _emailController.text, _passwordController.text, _usernameController.text));
                         },
                         text: 'Sign up',
                       );
