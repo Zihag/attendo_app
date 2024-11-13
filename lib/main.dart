@@ -1,7 +1,8 @@
 import 'package:attendo_app/app_blocs/activity/bloc/activity_bloc.dart';
 import 'package:attendo_app/app_blocs/auth/bloc/auth_bloc.dart';
 import 'package:attendo_app/app_blocs/group/bloc/group_bloc.dart';
-import 'package:attendo_app/app_blocs/link_invite/bloc/invite_bloc.dart';
+import 'package:attendo_app/app_blocs/invite_member/invitation/bloc/invitation_bloc.dart';
+import 'package:attendo_app/app_blocs/invite_member/link_invite/bloc/member_invite_bloc.dart';
 import 'package:attendo_app/app_blocs/today_activity/bloc/today_activity_bloc.dart';
 import 'package:attendo_app/app_blocs/user/bloc/user_bloc.dart';
 import 'package:attendo_app/screens/splash/splash_screen.dart';
@@ -48,7 +49,7 @@ class MyApp extends StatelessWidget {
               GroupBloc(FirebaseFirestore.instance)..add(LoadGroups()),
         ),
         BlocProvider(
-          create: (context) => InviteBloc(FirebaseFirestore.instance),
+          create: (context) => MemberInviteBloc(FirebaseFirestore.instance),
         ),
         BlocProvider(
           create: (context) => AuthBloc(FirebaseAuth.instance,
@@ -63,7 +64,13 @@ class MyApp extends StatelessWidget {
               LoadTodayActivities(),
             ),
         ),
-        BlocProvider(create: (context) => UserBloc(FirebaseFirestore.instance))
+        BlocProvider(create: (context) => UserBloc(FirebaseFirestore.instance)),
+        BlocProvider(
+          create: (context)  {
+            print('Initializing InvitationBloc');
+            return InvitationBloc(FirebaseFirestore.instance)
+            ..add(LoadInvitations());},
+        ),
       ],
       child: MaterialApp(
         home: SplashScreen(),

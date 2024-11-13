@@ -1,7 +1,8 @@
 import 'package:attendo_app/app_blocs/app_colors/app_colors.dart';
 import 'package:attendo_app/screens/navigation/activity/activity_screen.dart';
 import 'package:attendo_app/screens/navigation/home/home_screen.dart';
-import 'package:attendo_app/screens/navigation/notify/notification_screen.dart';
+import 'package:attendo_app/screens/navigation/home/notification_screen.dart';
+
 import 'package:attendo_app/screens/navigation/profile/profile_screen.dart';
 import 'package:attendo_app/screens/navigation/setting/settings_screen.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';

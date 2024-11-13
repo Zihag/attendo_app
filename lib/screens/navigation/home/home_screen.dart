@@ -1,8 +1,10 @@
 import 'package:attendo_app/app_blocs/app_colors/app_colors.dart';
 import 'package:attendo_app/app_blocs/group/bloc/group_bloc.dart';
+import 'package:attendo_app/app_blocs/invite_member/invitation/bloc/invitation_bloc.dart';
 import 'package:attendo_app/app_blocs/today_activity/bloc/today_activity_bloc.dart';
 import 'package:attendo_app/app_blocs/user/bloc/user_bloc.dart';
 import 'package:attendo_app/screens/group/group_detail_screen.dart';
+import 'package:attendo_app/screens/navigation/home/notification_screen.dart';
 import 'package:attendo_app/widgets/circle_avatar.dart';
 import 'package:attendo_app/widgets/custom_group_listtile.dart';
 import 'package:attendo_app/widgets/today_activity_listtile.dart';
@@ -21,11 +23,14 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
+
+    //Listen for state change for these elements
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       if (user != null) {
         context.read<GroupBloc>().add(LoadGroups());
         context.read<TodayActivityBloc>().add(LoadTodayActivities());
         context.read<UserBloc>().add(FetchUserData(user.uid));
+        context.read<InvitationBloc>().add(LoadInvitations());
       }
     });
     return Scaffold(
@@ -61,9 +66,9 @@ class HomeScreen extends StatelessWidget {
                                   fontSize: 16, fontWeight: FontWeight.w700),
                               overflow: TextOverflow.ellipsis,
                             );
-                          } else if (state is UserLoading){
+                          } else if (state is UserLoading) {
                             return CircularProgressIndicator();
-                          } else if (state is UserError){
+                          } else if (state is UserError) {
                             return Text(state.error);
                           }
                           return Text('User not found');
@@ -72,9 +77,14 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
                   Spacer(),
-                  SvgPicture.asset(
-                    'assets/vector/noti_icon.svg',
-                    height: 30,
+                  GestureDetector(
+                    child: SvgPicture.asset(
+                      'assets/vector/noti_icon.svg',
+                      height: 30,
+                    ),
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationScreen()));
+                    },
                   )
                 ],
               ),
@@ -118,10 +128,16 @@ class HomeScreen extends StatelessWidget {
                     .showSnackBar(SnackBar(content: Text(state.message)));
               }
             },
-            child: SizedBox(
-                height: 220,
-                child: BlocBuilder<TodayActivityBloc, TodayActivityState>(
-                  builder: (context, state) {
+            child: BlocBuilder<TodayActivityBloc, TodayActivityState>(
+              builder: (context, state) {
+                final double height = (state is TodayActivityLoaded &&
+                        state.activities.isNotEmpty)
+                    ? 220
+                    : 70;
+
+                return SizedBox(
+                  height: height,
+                  child: () {
                     if (state is TodayActivityLoading) {
                       return Center(
                         child: CircularProgressIndicator(),
@@ -159,8 +175,10 @@ class HomeScreen extends StatelessWidget {
                         child: Text('No activities for today'),
                       );
                     }
-                  },
-                )),
+                  }(),
+                );
+              },
+            ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25.0),
