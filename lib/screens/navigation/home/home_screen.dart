@@ -30,7 +30,6 @@ class HomeScreen extends StatelessWidget {
         context.read<GroupBloc>().add(LoadGroups());
         context.read<TodayActivityBloc>().add(LoadTodayActivities());
         context.read<UserBloc>().add(FetchUserData(user.uid));
-        context.read<InvitationBloc>().add(LoadInvitations());
       }
     });
     return Scaffold(
@@ -61,7 +60,7 @@ class HomeScreen extends StatelessWidget {
                         builder: (context, state) {
                           if (state is UserLoaded) {
                             return Text(
-                              state.username,
+                              state.displayName,
                               style: GoogleFonts.openSans(
                                   fontSize: 16, fontWeight: FontWeight.w700),
                               overflow: TextOverflow.ellipsis,
@@ -76,16 +75,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Spacer(),
-                  GestureDetector(
-                    child: SvgPicture.asset(
-                      'assets/vector/noti_icon.svg',
-                      height: 30,
-                    ),
-                    onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationScreen()));
-                    },
-                  )
+                  
                 ],
               ),
             ),

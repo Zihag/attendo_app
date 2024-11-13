@@ -29,6 +29,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   app_links: ^6.3.2
+  awesome_snackbar_content: ^0.1.4
   bloc: ^8.1.4
   card_loading: ^0.3.2
   cloud_firestore: ^5.4.4

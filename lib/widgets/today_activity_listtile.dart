@@ -40,7 +40,8 @@ class TodayActivityListTile extends StatelessWidget {
                   child: Row(
                     children: [
                       Expanded(
-                        child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 10),
                           child: Text(
                             groupName,
                             style: GoogleFonts.openSans(

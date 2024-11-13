@@ -60,7 +60,34 @@ class InvitationBloc extends Bloc<InvitationEvent, InvitationState> {
           .doc(event.invitationId)
           .update({'status': 'accepted'});
 
+      final invitationDoc = await _firebaseFirestore
+          .collection('invitations')
+          .doc(event.invitationId)
+          .get();
+
+      if (invitationDoc.exists) {
+        final groupId = invitationDoc['groupId'];
+        final email = invitationDoc['email'];
+
+        final userQuerySnapshot = await _firebaseFirestore
+            .collection('users')
+            .where('email', isEqualTo: email)
+            .limit(1)
+            .get();
+
+        if (userQuerySnapshot.docs.isNotEmpty) {
+          final userId = userQuerySnapshot.docs.first.id;
+
+          await _firebaseFirestore.collection('groups').doc(groupId).update({
+            'member': FieldValue.arrayUnion([
+              {"userId": userId}
+            ])
+          });
+        }
+      }
+
       emit(InvitationAccepted(event.invitationId));
+      add(LoadInvitations());
     } catch (e) {
       emit(InvitationError('Failed to accept invitation'));
     }
@@ -76,6 +103,7 @@ class InvitationBloc extends Bloc<InvitationEvent, InvitationState> {
           .update({'status': 'rejected'});
 
       emit(InvitationRejected(event.invitationId));
+      add(LoadInvitations());
     } catch (e) {
       emit(InvitationError('Failed to reject invitation'));
     }

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class InviteChoiceButton extends StatelessWidget {
+class ChoiceButton extends StatelessWidget {
   final Function()? onTap;
   final String text;
   final double? height;
   final Color color;
-  const InviteChoiceButton({super.key, this.onTap, required this.text, this.height, required this.color});
+  const ChoiceButton({super.key, this.onTap, required this.text, this.height, required this.color});
 
   @override
   Widget build(BuildContext context) {
