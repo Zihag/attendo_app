@@ -41,7 +41,7 @@ class HomeScreen extends StatelessWidget {
           ),
           if (user != null)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: Row(
                 children: [
                   CustomCircleAvatar(
@@ -83,7 +83,7 @@ class HomeScreen extends StatelessWidget {
             height: 20,
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25.0),
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: Row(
               children: [
                 Padding(
@@ -106,7 +106,7 @@ class HomeScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
-                padding: EdgeInsets.only(left: 25),
+                padding: EdgeInsets.only(left: 10),
                 child: Text('Are you joining them today?'),
               ),
             ],
@@ -171,7 +171,7 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25.0),
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: Row(
               children: [
                 Padding(
@@ -244,10 +244,10 @@ class HomeScreen extends StatelessWidget {
                                   ),
                                 );
                               },
-                              onDelete: () {
-                                BlocProvider.of<GroupBloc>(context)
-                                    .add(DeleteGroup(group['id']));
-                              },
+                              // onOption: () {
+                              //   BlocProvider.of<GroupBloc>(context)
+                              //       .add(DeleteGroup(group['id']));
+                              // },
                             );
                           });
                     },

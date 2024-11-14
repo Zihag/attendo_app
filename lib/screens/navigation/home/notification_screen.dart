@@ -33,16 +33,16 @@ class NotificationScreen extends StatelessWidget {
           child: BlocListener<InvitationBloc, InvitationState>(
             listener: (context, state) {
               if(state is InvitationAccepted){
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: AwesomeSnackbarContent(title: 'Accepted', message: "Let's explore your new group", contentType: ContentType.success,), backgroundColor: Colors.transparent, elevation: 0,duration: Duration(seconds: 1),));
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: AwesomeSnackbarContent(title: 'Accepted', message: "Let's explore your new group", contentType: ContentType.success,), backgroundColor: Colors.transparent, elevation: 0,duration: Duration(seconds: 1),));
               }
             },
             child: BlocBuilder<InvitationBloc, InvitationState>(
               builder: (context, state) {
                 if (state is InvitationLoading) {
-                  return CircularProgressIndicator();
+                  return const CircularProgressIndicator();
                 } else if (state is InvitationLoaded) {
                   if (state.invitations.isEmpty) {
-                    return Text('No notification now');
+                    return const Text('No notification now');
                   }
                   return ListView.builder(
                     itemCount: state.invitations.length,
@@ -71,7 +71,7 @@ class NotificationScreen extends StatelessWidget {
                             builder: (context, userState) {
                               if (groupState is GroupDetailLoading ||
                                   userState is UserLoading) {
-                                return CardLoading(
+                                return const CardLoading(
                                   height: 80,
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(10)),
@@ -90,7 +90,7 @@ class NotificationScreen extends StatelessWidget {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Column(
+                                            const Column(
                                               children: [
                                                 CircleAvatar(
                                                   backgroundImage: NetworkImage(
@@ -99,7 +99,7 @@ class NotificationScreen extends StatelessWidget {
                                                 ),
                                               ],
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               width: 10,
                                             ),
                                             Expanded(
@@ -116,7 +116,7 @@ class NotificationScreen extends StatelessWidget {
                                                             maxLines: 2,
                                                             textAlign: TextAlign.start,
                                                   ),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 10,
                                                   ),
                                                   Row(
@@ -149,7 +149,7 @@ class NotificationScreen extends StatelessWidget {
                                                 ],
                                               ),
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               width: 10,
                                             ),
                                           ],
@@ -168,7 +168,7 @@ class NotificationScreen extends StatelessWidget {
                               } else if (userState is UserError) {
                                 return Text(userState.error);
                               }
-                              return SizedBox.shrink();
+                              return const SizedBox.shrink();
                             },
                           );
                         }),
@@ -180,7 +180,7 @@ class NotificationScreen extends StatelessWidget {
                     child: Text(state.message),
                   );
                 }
-                return Center(
+                return const Center(
                   child: Text('No notification found'),
                 );
               },

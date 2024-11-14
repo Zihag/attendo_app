@@ -73,7 +73,7 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        home: SplashScreen(),
+        home: const SplashScreen(),
         theme: _buildTheme(Brightness.light),
       ),
     );
