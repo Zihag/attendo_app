@@ -1,13 +1,15 @@
-import 'package:attendo_app/app_blocs/app_colors/app_colors.dart';
+import 'package:attendo_app/app_colors/app_colors.dart';
 import 'package:attendo_app/app_blocs/group/bloc/group_bloc.dart';
 import 'package:attendo_app/app_blocs/invite_member/invitation/bloc/invitation_bloc.dart';
 import 'package:attendo_app/app_blocs/today_activity/bloc/today_activity_bloc.dart';
 import 'package:attendo_app/app_blocs/user/bloc/user_bloc.dart';
 import 'package:attendo_app/screens/group/group_detail_screen.dart';
 import 'package:attendo_app/screens/navigation/home/notification_screen.dart';
+import 'package:attendo_app/services/attendance_service.dart';
 import 'package:attendo_app/widgets/circle_avatar.dart';
 import 'package:attendo_app/widgets/custom_group_listtile.dart';
 import 'package:attendo_app/widgets/today_activity_listtile.dart';
+import 'package:card_loading/card_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -66,7 +68,11 @@ class HomeScreen extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                             );
                           } else if (state is UserLoading) {
-                            return CircularProgressIndicator();
+                            return CardLoading(
+                              height: 20,
+                              borderRadius: BorderRadius.circular(10),
+                              width: 200,
+                            );
                           } else if (state is UserError) {
                             return Text(state.error);
                           }
@@ -75,7 +81,6 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  
                 ],
               ),
             ),
@@ -130,8 +135,11 @@ class HomeScreen extends StatelessWidget {
                   child: () {
                     if (state is TodayActivityLoading) {
                       return Center(
-                        child: CircularProgressIndicator(),
-                      );
+                          child: CardLoading(
+                        height: 70,
+                        width: 380,
+                        borderRadius: BorderRadius.circular(10),
+                      ));
                     } else if (state is TodayActivityLoaded) {
                       if (state.activities.isEmpty) {
                         return Center(
@@ -152,6 +160,10 @@ class HomeScreen extends StatelessWidget {
                               groupName: activity['groupName'],
                               time: activity['actTime'],
                               frequency: activity['frequency'],
+                              onChoiceSelected: (status) async {
+                                await AttendanceService().recordAttendance(activity['groupId'], activity['activityId'], user!.uid, status);
+                                print('User selected: $status');
+                              },
                             ),
                           );
                         },
@@ -197,11 +209,19 @@ class HomeScreen extends StatelessWidget {
             child: BlocBuilder<GroupBloc, GroupState>(
               builder: (context, state) {
                 if (state is GroupLoading) {
-                  return Center(
-                      child: LottieBuilder.asset(
-                    'assets/Lottie/loading.json',
-                    height: 200,
-                  ));
+                  return ListView.builder(
+                    itemCount: 4,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: CardLoading(
+                          height: 100,
+                          borderRadius: BorderRadius.circular(10),
+                          margin: EdgeInsets.only(bottom: 10),
+                        ),
+                      );
+                    },
+                  );
                 } else if (state is GroupLoaded) {
                   if (state.groups.isEmpty) {
                     return Column(

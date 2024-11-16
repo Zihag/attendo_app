@@ -1,4 +1,4 @@
-import 'package:attendo_app/app_blocs/app_colors/app_colors.dart';
+import 'package:attendo_app/app_colors/app_colors.dart';
 import 'package:attendo_app/screens/navigation/activity/activity_screen.dart';
 import 'package:attendo_app/screens/navigation/home/home_screen.dart';
 import 'package:attendo_app/screens/navigation/home/notification_screen.dart';

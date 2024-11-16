@@ -1,4 +1,4 @@
-import 'package:attendo_app/app_blocs/app_colors/app_colors.dart';
+import 'package:attendo_app/app_colors/app_colors.dart';
 import 'package:attendo_app/app_blocs/groupdetail/bloc/groupdetail_bloc.dart';
 import 'package:attendo_app/app_blocs/invite_member/invitation/bloc/invitation_bloc.dart';
 import 'package:attendo_app/app_blocs/user/bloc/user_bloc.dart';
@@ -39,7 +39,20 @@ class NotificationScreen extends StatelessWidget {
             child: BlocBuilder<InvitationBloc, InvitationState>(
               builder: (context, state) {
                 if (state is InvitationLoading) {
-                  return const CircularProgressIndicator();
+                  return ListView.builder(
+                    itemCount: 8,
+                    itemBuilder: (context,index){
+                      return  Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: const CardLoading(
+                                      height: 80,
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(10)),
+                                      margin: EdgeInsets.only(bottom: 10)),
+                      );
+                    },
+                    
+                  );
                 } else if (state is InvitationLoaded) {
                   if (state.invitations.isEmpty) {
                     return const Text('No notification now');
@@ -71,12 +84,7 @@ class NotificationScreen extends StatelessWidget {
                             builder: (context, userState) {
                               if (groupState is GroupDetailLoading ||
                                   userState is UserLoading) {
-                                return const CardLoading(
-                                  height: 80,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
-                                  margin: EdgeInsets.only(bottom: 10),
-                                );
+                                return const SizedBox.shrink();
                               } else if (groupState is GroupDetailLoaded &&
                                   userState is UserLoaded) {
                                 return Container(
@@ -124,6 +132,7 @@ class NotificationScreen extends StatelessWidget {
                                                       ChoiceButton(
                                                           text: 'Accept',
                                                           color: AppColors.cyan,
+                                                          textColor: Colors.white,
                                                           height: 30,
                                                           onTap: () {
                                                             BlocProvider.of<
@@ -136,6 +145,7 @@ class NotificationScreen extends StatelessWidget {
                                                           text: 'Decline',
                                                           color:
                                                               Colors.grey[700]!,
+                                                          textColor: Colors.white,
                                                           height: 30,
                                                           onTap: () {
                                                             BlocProvider.of<

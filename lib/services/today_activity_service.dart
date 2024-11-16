@@ -7,10 +7,10 @@ class TodayActivityService {
   TodayActivityService(this._firebaseFirestore);
 
   Future<List<Map<String, dynamic>>> fetchTodayActivities(String userId) async {
-    final today = DateTime.now();
-    final todayDate = DateFormat('yyyy-MM-dd').format(today);
-    final weekday = today.weekday;
-    final dayOfMonth = today.day;
+    final now = DateTime.now();
+    final todayDate = DateFormat('yyyy-MM-dd').format(now);
+    final weekday = now.weekday;
+    final dayOfMonth = now.day;
 
     List<Map<String, dynamic>> todayActivities = [];
 
@@ -28,6 +28,7 @@ class TodayActivityService {
           .collection('activities')
           .get();
       for (var activityDoc in activityQuerySnapshot.docs) {
+        final activityId = activityDoc.id;
         final activityData = activityDoc.data();
         final frequency = activityData['frequency'];
         final actTime = activityData['actTime'];
@@ -59,13 +60,22 @@ class TodayActivityService {
             }
             break;
         }
-        if (isTodayActivity) {
-          todayActivities.add({
-            'activityName': activityData['name'],
-            'groupName': groupName,
-            'actTime': actTime,
-            'frequency': activityData['frequency']
-          });
+        if (isTodayActivity && actTime != null) {
+          final scheduledTime = DateFormat('HH:mm').parse(actTime);
+          final currentTime =
+              DateTime(now.year, now.month, now.day, now.hour, now.minute);
+
+          if (currentTime.isBefore(DateTime(now.year, now.month, now.day,
+              scheduledTime.hour, scheduledTime.minute))) {
+            todayActivities.add({
+              'activityName': activityData['name'],
+              'groupName': groupName,
+              'actTime': actTime,
+              'frequency': activityData['frequency'],
+              'groupId': groupId,
+              'activityId': activityId
+            });
+          }
         }
       }
     }

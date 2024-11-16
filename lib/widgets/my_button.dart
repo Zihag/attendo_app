@@ -1,4 +1,4 @@
-import 'package:attendo_app/app_blocs/app_colors/app_colors.dart';
+import 'package:attendo_app/app_colors/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class MyButton extends StatelessWidget {
