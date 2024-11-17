@@ -56,4 +56,30 @@ final dateKey = DateFormat('yyyy-MM-dd').format(date);
           throw Exception("Error loading attendance: $e");
         }
   }
+
+  Future<String?> getUserAttendanceChoice(String groupId, String activityId, String userId) async {
+    try {
+      final dateKey = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      final userAttendanceRef = _firebaseFirestore
+      .collection('groups')
+      .doc(groupId)
+      .collection('activities')
+      .doc(activityId)
+      .collection('attendanceRecords')
+      .doc(dateKey)
+      .collection('attendanceChoices')
+      .doc(userId);
+
+      final userAttendanceDoc = await userAttendanceRef.get();
+
+      if(userAttendanceDoc.exists){
+        final data = userAttendanceDoc.data();
+        return data?['status'] as String?;
+      } else {
+        return null;
+      }
+    } catch (e){
+      throw Exception('Error fetching user attendance choice: $e');
+    }
+  }
 }

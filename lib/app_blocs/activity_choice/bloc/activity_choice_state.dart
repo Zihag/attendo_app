@@ -11,3 +11,8 @@ class ActivityChoiceSelected extends ActivityChoiceState {
   ActivityChoiceSelected(this.selectedChoice);
 }
 
+class ActivityChoiceError extends ActivityChoiceState {
+  final String message;
+
+  ActivityChoiceError(this.message);
+}

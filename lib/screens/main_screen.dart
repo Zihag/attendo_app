@@ -1,13 +1,12 @@
 import 'package:attendo_app/app_colors/app_colors.dart';
 import 'package:attendo_app/screens/navigation/activity/activity_screen.dart';
 import 'package:attendo_app/screens/navigation/home/home_screen.dart';
-import 'package:attendo_app/screens/navigation/home/notification_screen.dart';
+import 'package:attendo_app/screens/navigation/notify/notification_screen.dart';
 
 import 'package:attendo_app/screens/navigation/profile/profile_screen.dart';
 import 'package:attendo_app/screens/navigation/setting/settings_screen.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-
 
 class MainScreen extends StatefulWidget {
   @override
@@ -34,30 +33,47 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:  Stack(
+      body: Stack(
         children: [
-      _screens[_selectedIndex],
-      Align(
-        alignment: Alignment.bottomCenter,
-        child: CurvedNavigationBar(
-        backgroundColor: Colors.transparent!,
-        items: [
-          Icon(Icons.timer,color: Colors.grey[700],),
-          Icon(Icons.notifications,color: Colors.grey[700],),
-          Icon(Icons.home,color: Colors.grey[700],),
-          Icon(Icons.person_4_rounded,color: Colors.grey[700],),
-          Icon(Icons.settings,color: Colors.grey[700],),
-        ],
-        onTap: _onItemTapped,
-        index: 2,
-        animationDuration: Duration(milliseconds: 300),height: 60.0,
-        color: AppColors.cyan,
-      ),
-      )
+          IndexedStack(
+            index: _selectedIndex,
+            children: _screens,
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: CurvedNavigationBar(
+              backgroundColor: Colors.transparent!,
+              items: [
+                Icon(
+                  Icons.timer,
+                  color: Colors.grey[700],
+                ),
+                Icon(
+                  Icons.notifications,
+                  color: Colors.grey[700],
+                ),
+                Icon(
+                  Icons.home,
+                  color: Colors.grey[700],
+                ),
+                Icon(
+                  Icons.person_4_rounded,
+                  color: Colors.grey[700],
+                ),
+                Icon(
+                  Icons.settings,
+                  color: Colors.grey[700],
+                ),
+              ],
+              onTap: _onItemTapped,
+              index: 2,
+              animationDuration: Duration(milliseconds: 300),
+              height: 60.0,
+              color: AppColors.cyan,
+            ),
+          )
         ],
       ),
     );
   }
 }
-
-
