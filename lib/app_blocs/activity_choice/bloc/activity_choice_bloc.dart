@@ -18,7 +18,7 @@ class ActivityChoiceBloc extends Bloc<ActivityChoiceEvent, ActivityChoiceState> 
   FutureOr<void> _onSelectChoice(SelectChoiceEvent event, Emitter<ActivityChoiceState> emit) async {
     try {
       await attendanceService.recordAttendance(event.groupId, event.activityId, event.userId, event.choice);
-      emit(ActivityChoiceSelected(event.choice));
+      emit(ActivityChoiceSelected(event.choice,event.activityId));
     } catch (e) {
       emit(ActivityChoiceError("Failed to record attendance: $e"));
     }
@@ -32,7 +32,7 @@ class ActivityChoiceBloc extends Bloc<ActivityChoiceEvent, ActivityChoiceState> 
     try {
       final choice = await attendanceService.getUserAttendanceChoice(event.groupId, event.activityId, event.userId);
       if (choice != null){
-        emit(ActivityChoiceSelected(choice));
+        emit(ActivityChoiceSelected(choice, event.activityId));
       } else {
         emit(ActivityChoiceInitial());
       }

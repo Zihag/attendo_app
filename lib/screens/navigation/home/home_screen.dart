@@ -1,10 +1,9 @@
+import 'package:attendo_app/app_blocs/activity_choice/bloc/activity_choice_bloc.dart';
 import 'package:attendo_app/app_colors/app_colors.dart';
 import 'package:attendo_app/app_blocs/group/bloc/group_bloc.dart';
-import 'package:attendo_app/app_blocs/invite_member/invitation/bloc/invitation_bloc.dart';
 import 'package:attendo_app/app_blocs/today_activity/bloc/today_activity_bloc.dart';
 import 'package:attendo_app/app_blocs/user/bloc/user_bloc.dart';
 import 'package:attendo_app/screens/group/group_detail_screen.dart';
-import 'package:attendo_app/screens/navigation/home/notification_screen.dart';
 import 'package:attendo_app/services/attendance_service.dart';
 import 'package:attendo_app/widgets/circle_avatar.dart';
 import 'package:attendo_app/widgets/custom_group_listtile.dart';
@@ -14,10 +13,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:lottie/lottie.dart';
 
 class HomeScreen extends StatelessWidget {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
@@ -153,18 +150,44 @@ class HomeScreen extends StatelessWidget {
                         itemCount: activities.length,
                         itemBuilder: (context, index) {
                           final activity = activities[index];
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: TodayActivityListTile(
-                              activityName: activity['activityName'],
-                              groupName: activity['groupName'],
-                              time: activity['actTime'],
-                              frequency: activity['frequency'],
-                              onChoiceSelected: (status) async {
-                                await AttendanceService().recordAttendance(activity['groupId'], activity['activityId'], user!.uid, status);
-                                print('User selected: $status');
-                              },
-                            ),
+                          final groupId = activity['groupId'];
+                          final activityId = activity['activityId'];
+
+                          context
+                              .read<ActivityChoiceBloc>()
+                              .add(LoadChoiceEvent(
+                                groupId,
+                                activityId,
+                                user!.uid,
+                              ));
+                          return BlocBuilder<ActivityChoiceBloc,
+                              ActivityChoiceState>(
+                            builder: (context, choiceState) {
+                              String? selectedChoice;
+
+                              if(choiceState is ActivityChoiceSelected && choiceState.activityId == activityId){
+                                selectedChoice = choiceState.selectedChoice;
+                              }
+
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 10),
+                                child: TodayActivityListTile(
+                                  activityName: activity['activityName'],
+                                  groupName: activity['groupName'],
+                                  time: activity['actTime'],
+                                  frequency: activity['frequency'],
+                                  onChoiceSelected: (status) async {
+                                    await AttendanceService().recordAttendance(
+                                        activity['groupId'],
+                                        activity['activityId'],
+                                        user.uid,
+                                        status);
+                                    print('User selected: $status');
+                                  },
+                                ),
+                              );
+                            },
                           );
                         },
                       );

@@ -1,5 +1,5 @@
-import 'package:attendo_app/app_colors/app_colors.dart';
-import 'package:attendo_app/widgets/choice_button.dart';
+
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,7 +9,9 @@ class TodayActivityListTile extends StatefulWidget {
   final String groupName;
   final String time;
   final String frequency;
+  final String? selectedChoice;
   final Function(String status)? onChoiceSelected;
+
   const TodayActivityListTile({
     super.key,
     required this.activityName,
@@ -17,6 +19,7 @@ class TodayActivityListTile extends StatefulWidget {
     required this.time,
     required this.frequency,
     this.onChoiceSelected,
+    this.selectedChoice,
   });
 
   @override
@@ -24,19 +27,10 @@ class TodayActivityListTile extends StatefulWidget {
 }
 
 class _TodayActivityListTileState extends State<TodayActivityListTile> {
-  String? selectedChoice;
-
-  void _handleSelection(String choice) {
-    setState(() {
-      selectedChoice = choice;
-    });
-    if (widget.onChoiceSelected != null) {
-      widget.onChoiceSelected!(choice);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final selectedChoice = widget.selectedChoice;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Container(
@@ -131,7 +125,7 @@ class _TodayActivityListTileState extends State<TodayActivityListTile> {
                           Row(
                             children: [
                               GestureDetector(
-                                onTap: () => _handleSelection("Yes"),
+                                onTap: () => widget.onChoiceSelected?.call("Yes"),
                                 child: Stack(
                                   alignment: Alignment.center,
                                   children: [
@@ -163,7 +157,7 @@ class _TodayActivityListTileState extends State<TodayActivityListTile> {
                           Row(
                             children: [
                               GestureDetector(
-                                onTap: () => _handleSelection("No"),
+                                onTap: () => widget.onChoiceSelected?.call("No"),
                                 child: Stack(
                                   alignment: Alignment.center,
                                   children: [

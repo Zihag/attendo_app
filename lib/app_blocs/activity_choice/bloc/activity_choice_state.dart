@@ -6,9 +6,10 @@ sealed class ActivityChoiceState {}
 final class ActivityChoiceInitial extends ActivityChoiceState {}
 
 class ActivityChoiceSelected extends ActivityChoiceState {
+  final String activityId;
   final String selectedChoice;
 
-  ActivityChoiceSelected(this.selectedChoice);
+  ActivityChoiceSelected(this.selectedChoice, this.activityId);
 }
 
 class ActivityChoiceError extends ActivityChoiceState {

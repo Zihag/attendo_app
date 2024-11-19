@@ -1,4 +1,5 @@
 import 'package:attendo_app/app_blocs/activity/bloc/activity_bloc.dart';
+import 'package:attendo_app/app_blocs/activity_choice/bloc/activity_choice_bloc.dart';
 import 'package:attendo_app/app_blocs/auth/bloc/auth_bloc.dart';
 import 'package:attendo_app/app_blocs/group/bloc/group_bloc.dart';
 import 'package:attendo_app/app_blocs/invite_member/invitation/bloc/invitation_bloc.dart';
@@ -6,6 +7,7 @@ import 'package:attendo_app/app_blocs/invite_member/link_invite/bloc/member_invi
 import 'package:attendo_app/app_blocs/today_activity/bloc/today_activity_bloc.dart';
 import 'package:attendo_app/app_blocs/user/bloc/user_bloc.dart';
 import 'package:attendo_app/screens/splash/splash_screen.dart';
+import 'package:attendo_app/services/attendance_service.dart';
 import 'package:attendo_app/services/today_activity_service.dart';
 import 'package:attendo_app/services/username_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -26,20 +28,24 @@ void main() async {
   ));
   final todayActivityService = TodayActivityService(FirebaseFirestore.instance);
   final usernameService = UsernameService(FirebaseFirestore.instance);
+  final attendanceService = AttendanceService();
   runApp(MyApp(
     todayActivityService: todayActivityService,
     usernameService: usernameService,
+    attendanceService: attendanceService,
+    
   ));
 }
 
 class MyApp extends StatelessWidget {
   final TodayActivityService todayActivityService;
   final UsernameService usernameService;
+  final AttendanceService attendanceService;
 
   const MyApp(
       {super.key,
       required this.todayActivityService,
-      required this.usernameService});
+      required this.usernameService, required this.attendanceService});
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -71,6 +77,7 @@ class MyApp extends StatelessWidget {
             return InvitationBloc(FirebaseFirestore.instance)
             ..add(LoadInvitations());},
         ),
+        BlocProvider(create: (context) => ActivityChoiceBloc(AttendanceService())),
       ],
       child: MaterialApp(
         home: const SplashScreen(),
