@@ -30,3 +30,11 @@ class LoadChoiceEvent extends ActivityChoiceEvent {
     this.userId,
   );
 }
+
+class CountAttendanceChoice extends ActivityChoiceEvent{
+  final String groupId;
+  final String activityId;
+  final DateTime date;
+
+  CountAttendanceChoice(this.groupId, this.activityId, this.date);
+}

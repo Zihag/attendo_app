@@ -5,6 +5,8 @@ sealed class ActivityChoiceState {}
 
 final class ActivityChoiceInitial extends ActivityChoiceState {}
 
+class ActivityChoiceLoading extends ActivityChoiceState{}
+
 class ActivityChoiceSelected extends ActivityChoiceState {
   final String activityId;
   final String selectedChoice;
@@ -16,4 +18,11 @@ class ActivityChoiceError extends ActivityChoiceState {
   final String message;
 
   ActivityChoiceError(this.message);
+}
+
+class ActivityChoicesCounted extends ActivityChoiceState{
+  final int yesCount;
+  final int noCount;
+
+  ActivityChoicesCounted(this.yesCount, this.noCount);
 }

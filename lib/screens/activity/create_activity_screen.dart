@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:attendo_app/app_blocs/activity/bloc/activity_bloc.dart';
 import 'package:attendo_app/widgets/date_time_picker.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class CreateActivityScreen extends StatefulWidget {
   final String groupId;

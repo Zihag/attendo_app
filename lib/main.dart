@@ -14,10 +14,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
+  debugPaintSizeEnabled = false;
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
       options: const FirebaseOptions(
@@ -77,7 +79,7 @@ class MyApp extends StatelessWidget {
             return InvitationBloc(FirebaseFirestore.instance)
             ..add(LoadInvitations());},
         ),
-        BlocProvider(create: (context) => ActivityChoiceBloc(AttendanceService())),
+        BlocProvider(create: (context) => ActivityChoiceBloc(attendanceService)),
       ],
       child: MaterialApp(
         home: const SplashScreen(),

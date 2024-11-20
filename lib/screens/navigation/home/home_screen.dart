@@ -13,6 +13,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -35,7 +36,7 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: Colors.grey[300],
       body: Column(
         children: [
-          SizedBox(
+          const SizedBox(
             height: 35,
           ),
           if (user != null)
@@ -46,7 +47,7 @@ class HomeScreen extends StatelessWidget {
                   CustomCircleAvatar(
                       photoURL: user.photoURL ??
                           'https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg'),
-                  SizedBox(
+                  const SizedBox(
                     width: 10,
                   ),
                   Row(
@@ -73,7 +74,7 @@ class HomeScreen extends StatelessWidget {
                           } else if (state is UserError) {
                             return Text(state.error);
                           }
-                          return Text('User not found');
+                          return const Text('User not found');
                         },
                       ),
                     ],
@@ -81,7 +82,7 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           Padding(
@@ -104,7 +105,7 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
           ),
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
@@ -139,7 +140,7 @@ class HomeScreen extends StatelessWidget {
                       ));
                     } else if (state is TodayActivityLoaded) {
                       if (state.activities.isEmpty) {
-                        return Center(
+                        return const Center(
                           child: Text('No activities today...'),
                         );
                       }
@@ -153,40 +154,64 @@ class HomeScreen extends StatelessWidget {
                           final groupId = activity['groupId'];
                           final activityId = activity['activityId'];
 
-                          context
-                              .read<ActivityChoiceBloc>()
-                              .add(LoadChoiceEvent(
-                                groupId,
-                                activityId,
-                                user!.uid,
-                              ));
-                          return BlocBuilder<ActivityChoiceBloc,
-                              ActivityChoiceState>(
+                          context.read<ActivityChoiceBloc>().add(LoadChoiceEvent(groupId, activityId, user!.uid));
+
+                          return BlocBuilder<ActivityChoiceBloc,ActivityChoiceState>(
                             builder: (context, choiceState) {
                               String? selectedChoice;
-
-                              if(choiceState is ActivityChoiceSelected && choiceState.activityId == activityId){
+                          
+                              if (choiceState is ActivityChoiceSelected) {
                                 selectedChoice = choiceState.selectedChoice;
                               }
-
-                              return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 10),
-                                child: TodayActivityListTile(
+                          
+                              return Stack(children: [
+                                TodayActivityListTile(
                                   activityName: activity['activityName'],
                                   groupName: activity['groupName'],
                                   time: activity['actTime'],
                                   frequency: activity['frequency'],
-                                  onChoiceSelected: (status) async {
-                                    await AttendanceService().recordAttendance(
-                                        activity['groupId'],
-                                        activity['activityId'],
-                                        user.uid,
-                                        status);
-                                    print('User selected: $status');
-                                  },
                                 ),
-                              );
+                                Positioned(
+                                  right: 30,
+                                  bottom: 40,
+                                  child: Column(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          print('Yes button tapped');
+                                          context
+                                              .read<ActivityChoiceBloc>()
+                                              .add(SelectChoiceEvent(
+                                                  'Yes',
+                                                  groupId,
+                                                  activityId,
+                                                  user.uid));
+                                        },
+                                        child: SvgPicture.asset(
+                                          selectedChoice == 'Yes'
+                                              ? 'assets/vector/button_yes_fill.svg'
+                                              : 'assets/vector/button_yes_stroke.svg',
+                                          height: 35,
+                                        ),
+                                      ),
+                                      SizedBox(height: 10,),
+                                      GestureDetector(
+                                        
+                                        onTap: (){
+                                          print('No button tapped');
+                                          context.read<ActivityChoiceBloc>().add(SelectChoiceEvent('No', groupId, activityId, user.uid));
+                                        },
+                                        child: SvgPicture.asset(
+                                          selectedChoice == 'No'
+                                          ? 'assets/vector/button_no_fill.svg'
+                                          :'assets/vector/button_no_stroke.svg',
+                                          height: 35,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ]);
                             },
                           );
                         },

@@ -1,43 +1,70 @@
 import 'dart:async';
 
+import 'package:attendo_app/app_blocs/attendance/bloc/attendance_bloc.dart';
 import 'package:attendo_app/services/attendance_service.dart';
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meta/meta.dart';
 
 part 'activity_choice_event.dart';
 part 'activity_choice_state.dart';
 
-class ActivityChoiceBloc extends Bloc<ActivityChoiceEvent, ActivityChoiceState> {
+class ActivityChoiceBloc
+    extends Bloc<ActivityChoiceEvent, ActivityChoiceState> {
   final AttendanceService attendanceService;
   ActivityChoiceBloc(this.attendanceService) : super(ActivityChoiceInitial()) {
     on<SelectChoiceEvent>(_onSelectChoice);
     on<ResetChoiceEvent>(_onResetChoice);
     on<LoadChoiceEvent>(_onLoadChoiceEvent);
+    on<CountAttendanceChoice>(_onCountAttendanceChoices);
   }
 
-  FutureOr<void> _onSelectChoice(SelectChoiceEvent event, Emitter<ActivityChoiceState> emit) async {
+  FutureOr<void> _onSelectChoice(
+      SelectChoiceEvent event, Emitter<ActivityChoiceState> emit) async {
     try {
-      await attendanceService.recordAttendance(event.groupId, event.activityId, event.userId, event.choice);
-      emit(ActivityChoiceSelected(event.choice,event.activityId));
+      print('SelectChoiceEvent received: ${event.choice}');
+      await attendanceService.recordAttendance(
+          event.groupId, event.activityId, event.userId, event.choice);
+      emit(ActivityChoiceSelected(event.choice, event.activityId));
+      print('Choice succesfully recorded: ${event.choice}');
     } catch (e) {
+      print('Error recording choice: $e');
       emit(ActivityChoiceError("Failed to record attendance: $e"));
     }
   }
 
-  FutureOr<void> _onResetChoice(ResetChoiceEvent event, Emitter<ActivityChoiceState> emit) async {
+  FutureOr<void> _onResetChoice(
+      ResetChoiceEvent event, Emitter<ActivityChoiceState> emit) async {
     emit(ActivityChoiceInitial());
   }
 
-  FutureOr<void> _onLoadChoiceEvent(LoadChoiceEvent event, Emitter<ActivityChoiceState> emit) async {
+  FutureOr<void> _onLoadChoiceEvent(
+      LoadChoiceEvent event, Emitter<ActivityChoiceState> emit) async {
     try {
-      final choice = await attendanceService.getUserAttendanceChoice(event.groupId, event.activityId, event.userId);
-      if (choice != null){
+      final choice = await attendanceService.getUserAttendanceChoice(
+          event.groupId, event.activityId, event.userId);
+      if (choice != null) {
         emit(ActivityChoiceSelected(choice, event.activityId));
       } else {
         emit(ActivityChoiceInitial());
       }
-    } catch (e){
+    } catch (e) {
       emit(ActivityChoiceError("Failed to load choice: $e"));
+    }
+  }
+
+  FutureOr<void> _onCountAttendanceChoices(
+      CountAttendanceChoice event, Emitter<ActivityChoiceState> emit) async {
+    emit(ActivityChoiceLoading());
+    try {
+      final counts = await attendanceService.countAttendanceChoices(
+          event.groupId, event.activityId, DateTime.now());
+      final yesCount = counts['Yes'] ?? 0;
+      final noCount = counts['No'] ?? 0;
+      emit(ActivityChoicesCounted(yesCount, noCount));
+    } catch (e) {
+      emit(ActivityChoiceError(
+          "Failed to count activity choices: ${e.toString()}"));
     }
   }
 }

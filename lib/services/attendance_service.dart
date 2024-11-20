@@ -82,4 +82,30 @@ final dateKey = DateFormat('yyyy-MM-dd').format(date);
       throw Exception('Error fetching user attendance choice: $e');
     }
   }
+
+  Future<Map<String, int>> countAttendanceChoices(
+    String groupId, String activityId, DateTime date
+  ) async {
+    try {
+      final atteandanceRecords = await loadAttendance(groupId, activityId, date);
+
+      int yesCount = 0;
+      int noCount = 0;
+
+      for(final record in atteandanceRecords){
+        if(record['status'] == 'Yes'){
+          yesCount++;
+        } else if (record['status'] == 'No'){
+          noCount++;
+        }
+      }
+
+      return {
+        'Yes': yesCount,
+        'No':noCount,
+      };
+    } catch (e){
+      throw Exception('Error counting attendance choices: $e');
+    }
+  }
 }
