@@ -26,3 +26,12 @@ class ActivityChoicesCounted extends ActivityChoiceState{
 
   ActivityChoicesCounted(this.yesCount, this.noCount);
 }
+
+class ActivityChoiceUpdated extends ActivityChoiceState {
+  final String? selectedChoice;
+  final int yesCount;
+  final int noCount;
+
+  ActivityChoiceUpdated({required this.selectedChoice, required this.yesCount, required this.noCount});
+}
+

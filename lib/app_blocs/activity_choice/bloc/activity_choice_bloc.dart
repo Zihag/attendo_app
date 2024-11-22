@@ -25,7 +25,10 @@ class ActivityChoiceBloc
       print('SelectChoiceEvent received: ${event.choice}');
       await attendanceService.recordAttendance(
           event.groupId, event.activityId, event.userId, event.choice);
-      emit(ActivityChoiceSelected(event.choice, event.activityId));
+
+      final counts = await attendanceService.countAttendanceChoices(event.groupId, event.activityId, DateTime.now());
+      
+      emit(ActivityChoiceUpdated(selectedChoice: event.choice, yesCount: counts['Yes']??0, noCount: counts['No']??0));
       print('Choice succesfully recorded: ${event.choice}');
     } catch (e) {
       print('Error recording choice: $e');
@@ -43,8 +46,12 @@ class ActivityChoiceBloc
     try {
       final choice = await attendanceService.getUserAttendanceChoice(
           event.groupId, event.activityId, event.userId);
+
+          final counts = await attendanceService.countAttendanceChoices(event.groupId, event.activityId, DateTime.now());
+          final yesCount = counts['Yes']??0;
+          final noCount = counts['No']??0;
       if (choice != null) {
-        emit(ActivityChoiceSelected(choice, event.activityId));
+        emit(ActivityChoiceUpdated(selectedChoice: choice, yesCount: yesCount, noCount: noCount));
       } else {
         emit(ActivityChoiceInitial());
       }
@@ -61,6 +68,8 @@ class ActivityChoiceBloc
           event.groupId, event.activityId, DateTime.now());
       final yesCount = counts['Yes'] ?? 0;
       final noCount = counts['No'] ?? 0;
+      print(yesCount);
+      print(noCount);
       emit(ActivityChoicesCounted(yesCount, noCount));
     } catch (e) {
       emit(ActivityChoiceError(

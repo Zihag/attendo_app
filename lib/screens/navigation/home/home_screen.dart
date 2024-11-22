@@ -154,16 +154,22 @@ class HomeScreen extends StatelessWidget {
                           final groupId = activity['groupId'];
                           final activityId = activity['activityId'];
 
-                          context.read<ActivityChoiceBloc>().add(LoadChoiceEvent(groupId, activityId, user!.uid));
+                          context.read<ActivityChoiceBloc>().add(
+                              LoadChoiceEvent(groupId, activityId, user!.uid));
 
                           return BlocBuilder<ActivityChoiceBloc,ActivityChoiceState>(
                             builder: (context, choiceState) {
+                              int yesCount = 0;
+                              int noCount = 0;
                               String? selectedChoice;
-                          
-                              if (choiceState is ActivityChoiceSelected) {
+
+                              if (choiceState is ActivityChoiceUpdated) {
                                 selectedChoice = choiceState.selectedChoice;
+                              
+                                yesCount = choiceState.yesCount;
+                                noCount = choiceState.noCount;
                               }
-                          
+
                               return Stack(children: [
                                 TodayActivityListTile(
                                   activityName: activity['activityName'],
@@ -186,26 +192,58 @@ class HomeScreen extends StatelessWidget {
                                                   groupId,
                                                   activityId,
                                                   user.uid));
+                                          context
+                                              .read<ActivityChoiceBloc>()
+                                              .add(CountAttendanceChoice(
+                                                  groupId,
+                                                  activityId,
+                                                  DateTime.now()));
                                         },
-                                        child: SvgPicture.asset(
-                                          selectedChoice == 'Yes'
-                                              ? 'assets/vector/button_yes_fill.svg'
-                                              : 'assets/vector/button_yes_stroke.svg',
-                                          height: 35,
+                                        child: Stack(
+                                          alignment: Alignment.centerRight,
+                                          children:[SvgPicture.asset(
+                                            selectedChoice == 'Yes'
+                                                ? 'assets/vector/button_yes_filled.svg'
+                                                : 'assets/vector/button_yes_stroke.svg',
+                                            height: 35
+                                          ),Padding(
+                                            padding: const EdgeInsets.only(right: 25),
+                                            child: Text('+$yesCount',style: GoogleFonts.openSans(fontWeight: FontWeight.bold),),
+                                          ),] 
                                         ),
                                       ),
-                                      SizedBox(height: 10,),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
                                       GestureDetector(
-                                        
-                                        onTap: (){
+                                        onTap: () {
                                           print('No button tapped');
-                                          context.read<ActivityChoiceBloc>().add(SelectChoiceEvent('No', groupId, activityId, user.uid));
+                                          context
+                                              .read<ActivityChoiceBloc>()
+                                              .add(SelectChoiceEvent(
+                                                  'No',
+                                                  groupId,
+                                                  activityId,
+                                                  user.uid));
+                                          context
+                                              .read<ActivityChoiceBloc>()
+                                              .add(CountAttendanceChoice(
+                                                  groupId,
+                                                  activityId,
+                                                  DateTime.now()));
                                         },
-                                        child: SvgPicture.asset(
-                                          selectedChoice == 'No'
-                                          ? 'assets/vector/button_no_fill.svg'
-                                          :'assets/vector/button_no_stroke.svg',
-                                          height: 35,
+                                        child: Stack(
+                                          alignment: Alignment.centerRight,
+                                          children: [SvgPicture.asset(
+                                            selectedChoice == 'No'
+                                                ? 'assets/vector/button_no_filled.svg'
+                                                : 'assets/vector/button_no_stroke.svg',
+                                            height: 35,
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(right: 25),
+                                            child: Text('+$noCount', style: GoogleFonts.openSans(fontWeight: FontWeight.bold),),
+                                          ),]
                                         ),
                                       ),
                                     ],
