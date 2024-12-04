@@ -79,7 +79,7 @@ class MyApp extends StatelessWidget {
             return InvitationBloc(FirebaseFirestore.instance)
             ..add(LoadInvitations());},
         ),
-        BlocProvider(create: (context) => ActivityChoiceBloc(attendanceService)),
+        // BlocProvider(create: (context) => ActivityChoiceBloc(attendanceService)),
       ],
       child: MaterialApp(
         home: const SplashScreen(),
