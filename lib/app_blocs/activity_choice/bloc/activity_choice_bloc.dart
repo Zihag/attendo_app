@@ -17,6 +17,7 @@ class ActivityChoiceBloc
     on<ResetChoiceEvent>(_onResetChoice);
     on<LoadChoiceEvent>(_onLoadChoiceEvent);
     on<CountAttendanceChoice>(_onCountAttendanceChoices);
+    on<FetchAttendanceListEvent>(_onFetchAttendanceListEvent);
   }
 
   FutureOr<void> _onSelectChoice(
@@ -50,11 +51,11 @@ class ActivityChoiceBloc
           final counts = await attendanceService.countAttendanceChoices(event.groupId, event.activityId, DateTime.now());
           final yesCount = counts['Yes']??0;
           final noCount = counts['No']??0;
-      if (choice != null) {
-        emit(ActivityChoiceUpdated(selectedChoice: choice, yesCount: yesCount, noCount: noCount));
-      } else {
-        emit(ActivityChoiceInitial());
-      }
+      emit(ActivityChoiceUpdated(
+        selectedChoice: choice,
+        yesCount: yesCount,
+        noCount: noCount,
+      ));
     } catch (e) {
       emit(ActivityChoiceError("Failed to load choice: $e"));
     }
@@ -74,6 +75,18 @@ class ActivityChoiceBloc
     } catch (e) {
       emit(ActivityChoiceError(
           "Failed to count activity choices: ${e.toString()}"));
+    }
+  }
+
+  FutureOr<void> _onFetchAttendanceListEvent(FetchAttendanceListEvent event, Emitter<ActivityChoiceState> emit) async {
+    try {
+      final DateTime today = DateTime.now();
+      final yesList = await attendanceService.getYesList(event.groupId, event.activityId, today);
+      final noList = await attendanceService.getNoList(event.groupId, event.activityId, today);
+
+      emit(AttendanceListLoaded(yesList: yesList, noList: noList));
+    } catch (e) {
+      emit(ActivityChoiceError("Failed to fetch attendance list: $e"));
     }
   }
 }

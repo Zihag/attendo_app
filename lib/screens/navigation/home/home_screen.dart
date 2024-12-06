@@ -158,7 +158,10 @@ class HomeScreen extends StatelessWidget {
                           //     LoadChoiceEvent(groupId, activityId, user!.uid));
 
                           return BlocProvider(
-                            create: (context) => ActivityChoiceBloc(AttendanceService())..add(LoadChoiceEvent(groupId, activityId, user!.uid)),
+                            create: (context) =>
+                                ActivityChoiceBloc(AttendanceService())
+                                  ..add(LoadChoiceEvent(
+                                      groupId, activityId, user!.uid)),
                             child: BlocBuilder<ActivityChoiceBloc,
                                 ActivityChoiceState>(
                               builder: (context, choiceState) {

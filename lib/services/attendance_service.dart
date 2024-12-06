@@ -108,4 +108,26 @@ final dateKey = DateFormat('yyyy-MM-dd').format(date);
       throw Exception('Error counting attendance choices: $e');
     }
   }
+
+  Future<List<String>> getYesList(String groupId, String activityId, DateTime date) async {
+    try {
+      final attendanceRecords = await loadAttendance(groupId, activityId, date);
+      return attendanceRecords
+      .where((record) => record['status'] == 'Yes')
+      .map((record) => record['userId'] as String)
+      .toList();
+    } catch (e){
+      throw Exception('Error fetching Yes list: $e');
+    }
+  } Future<List<String>> getNoList(String groupId, String activityId, DateTime date) async {
+    try {
+      final attendanceRecords = await loadAttendance(groupId, activityId, date);
+      return attendanceRecords
+      .where((record) => record['status'] == 'No')
+      .map((record) => record['userId'] as String)
+      .toList();
+    } catch(e) {
+      throw Exception('Error fetching No list: $e');
+    }
+  }
 }

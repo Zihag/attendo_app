@@ -5,6 +5,9 @@ class InviteUserService{
 
   InviteUserService(this._firebaseFirestore);
 
+
+
+//check if user already joined in the group
   Future<bool> checkUserInGroup({
     required String groupId, required String userId
   }) async {

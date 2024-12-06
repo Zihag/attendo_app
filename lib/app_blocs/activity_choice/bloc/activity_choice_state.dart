@@ -35,3 +35,9 @@ class ActivityChoiceUpdated extends ActivityChoiceState {
   ActivityChoiceUpdated({required this.selectedChoice, required this.yesCount, required this.noCount});
 }
 
+class AttendanceListLoaded extends ActivityChoiceState {
+  final List<String> yesList;
+  final List<String> noList;
+
+  AttendanceListLoaded({required this.yesList, required this.noList});
+}

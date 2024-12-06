@@ -38,3 +38,10 @@ class CountAttendanceChoice extends ActivityChoiceEvent{
 
   CountAttendanceChoice(this.groupId, this.activityId, this.date);
 }
+
+class FetchAttendanceListEvent extends ActivityChoiceEvent {
+  final String groupId;
+  final String activityId;
+
+  FetchAttendanceListEvent(this.groupId, this.activityId);
+}
