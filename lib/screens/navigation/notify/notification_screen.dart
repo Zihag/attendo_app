@@ -1,3 +1,5 @@
+import 'package:attendo_app/app_blocs/group/bloc/group_bloc.dart';
+import 'package:attendo_app/app_blocs/today_activity/bloc/today_activity_bloc.dart';
 import 'package:attendo_app/app_colors/app_colors.dart';
 import 'package:attendo_app/app_blocs/groupdetail/bloc/groupdetail_bloc.dart';
 import 'package:attendo_app/app_blocs/invite_member/invitation/bloc/invitation_bloc.dart';
@@ -32,8 +34,23 @@ class NotificationScreen extends StatelessWidget {
         body: Center(
           child: BlocListener<InvitationBloc, InvitationState>(
             listener: (context, state) {
-              if(state is InvitationAccepted){
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: AwesomeSnackbarContent(title: 'Accepted', message: "Let's explore your new group", contentType: ContentType.success,), backgroundColor: Colors.transparent, elevation: 0,duration: Duration(seconds: 1),));
+              if (state is InvitationAccepted) {
+
+                //reload bloc in home screen for new list
+                context.read<TodayActivityBloc>().add(LoadTodayActivities());
+                context.read<GroupBloc>().add(LoadGroups());
+
+                
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: AwesomeSnackbarContent(
+                    title: 'Accepted',
+                    message: "Let's explore your new group",
+                    contentType: ContentType.success,
+                  ),
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  duration: Duration(seconds: 1),
+                ));
               }
             },
             child: BlocBuilder<InvitationBloc, InvitationState>(
@@ -41,17 +58,15 @@ class NotificationScreen extends StatelessWidget {
                 if (state is InvitationLoading) {
                   return ListView.builder(
                     itemCount: 8,
-                    itemBuilder: (context,index){
-                      return  Padding(
+                    itemBuilder: (context, index) {
+                      return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: const CardLoading(
-                                      height: 80,
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10)),
-                                      margin: EdgeInsets.only(bottom: 10)),
+                            height: 80,
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            margin: EdgeInsets.only(bottom: 10)),
                       );
                     },
-                    
                   );
                 } else if (state is InvitationLoaded) {
                   if (state.invitations.isEmpty) {
@@ -112,17 +127,19 @@ class NotificationScreen extends StatelessWidget {
                                             ),
                                             Expanded(
                                               child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
                                                     "${userState.displayName} invited you to ${groupState.groupData['name']}",
                                                     style: GoogleFonts.openSans(
                                                         fontWeight:
                                                             FontWeight.w700),
-                                                            overflow: TextOverflow.ellipsis,
-                                                            softWrap: true,
-                                                            maxLines: 2,
-                                                            textAlign: TextAlign.start,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    softWrap: true,
+                                                    maxLines: 2,
+                                                    textAlign: TextAlign.start,
                                                   ),
                                                   const SizedBox(
                                                     height: 10,
@@ -132,7 +149,8 @@ class NotificationScreen extends StatelessWidget {
                                                       ChoiceButton(
                                                           text: 'Accept',
                                                           color: AppColors.cyan,
-                                                          textColor: Colors.white,
+                                                          textColor:
+                                                              Colors.white,
                                                           height: 30,
                                                           onTap: () {
                                                             BlocProvider.of<
@@ -145,7 +163,8 @@ class NotificationScreen extends StatelessWidget {
                                                           text: 'Decline',
                                                           color:
                                                               Colors.grey[700]!,
-                                                          textColor: Colors.white,
+                                                          textColor:
+                                                              Colors.white,
                                                           height: 30,
                                                           onTap: () {
                                                             BlocProvider.of<

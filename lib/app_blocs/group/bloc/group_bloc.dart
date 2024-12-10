@@ -43,6 +43,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
 
   FutureOr<void> _onLoadGroups(LoadGroups event, Emitter<GroupState> emit) async {
     emit(GroupLoading());
+    print('Emit group loading');
     try {
       String userId = await FirebaseAuth.instance.currentUser?.uid??'';
       print(userId);

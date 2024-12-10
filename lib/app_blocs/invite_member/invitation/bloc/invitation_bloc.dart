@@ -87,6 +87,7 @@ class InvitationBloc extends Bloc<InvitationEvent, InvitationState> {
       }
 
       emit(InvitationAccepted(event.invitationId));
+      print('Invitation accepted');
       add(LoadInvitations());
     } catch (e) {
       emit(InvitationError('Failed to accept invitation'));
