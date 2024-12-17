@@ -17,6 +17,11 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
     on<DeleteActivity>(_onDeleteActivity);
   }
 
+  //parse act TimeOfDay to DateTime
+  DateTime timeOfDayToDateTime(TimeOfDay timeOfDay){
+    return DateTime(2000,1,1,timeOfDay.hour, timeOfDay.minute);
+  }
+
   FutureOr<void> _onCreateActivity(
       CreateActivity event, Emitter<ActivityState> emit) async {
     try {
@@ -26,7 +31,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
         return;
       }
 
-      String actTimeString = "${event.actTime.hour.toString().padLeft(2,'0')}:${event.actTime.minute.toString().padLeft(2,'0')}";
+      DateTime actTimeDateTime = timeOfDayToDateTime(event.actTime);
 
       await _firebaseFirestore
           .collection('groups')
@@ -39,7 +44,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
         'onceDate': event.onceDate,
         'weeklyDate': event.weeklyDate,
         'monthlyDate': event.monthlyDate,
-        'actTime': actTimeString,
+        'actTime': actTimeDateTime,
         'createBy': user.uid,
         'create_at': FieldValue.serverTimestamp(),
       });

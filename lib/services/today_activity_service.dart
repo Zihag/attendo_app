@@ -61,16 +61,31 @@ class TodayActivityService {
             break;
         }
         if (isTodayActivity && actTime != null) {
-          final scheduledTime = DateFormat('HH:mm').parse(actTime);
+          String formattedActTime;
+          if (actTime is Timestamp) {
+            final actTimeDateTime = actTime.toDate();
+            formattedActTime = DateFormat('HH:mm').format(actTimeDateTime);
+          } else if (actTime is DateTime) {
+            formattedActTime = DateFormat('HH:mm').format(actTime);
+          } else {
+            // Trường hợp actTime là String, xử lý trực tiếp
+            formattedActTime = actTime;
+          }
+
           final currentTime =
               DateTime(now.year, now.month, now.day, now.hour, now.minute);
-
-          if (currentTime.isBefore(DateTime(now.year, now.month, now.day,
-              scheduledTime.hour, scheduledTime.minute))) {
+          final scheduledTime = DateTime(
+            now.year,
+            now.month,
+            now.day,
+            int.parse(formattedActTime.split(':')[0]),
+            int.parse(formattedActTime.split(':')[1]),
+          );
+          if (currentTime.isBefore(scheduledTime)) {
             todayActivities.add({
               'activityName': activityData['name'],
               'groupName': groupName,
-              'actTime': actTime,
+              'actTime': formattedActTime,
               'frequency': activityData['frequency'],
               'groupId': groupId,
               'activityId': activityId
