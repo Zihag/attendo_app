@@ -1,1 +1,38 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"attendoapp-8509f","appId":"1:939882538884:android:b63034a8424e9a1e745fd1","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"attendoapp-8509f","configurations":{"android":"1:939882538884:android:b63034a8424e9a1e745fd1","ios":"1:939882538884:ios:5b086654ed3fd519745fd1"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "attendoapp-8509f",
+          "appId": "1:939882538884:android:b63034a8424e9a1e745fd1",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "attendoapp-8509f",
+          "configurations": {
+            "android": "1:939882538884:android:b63034a8424e9a1e745fd1",
+            "ios": "1:939882538884:ios:5b086654ed3fd519745fd1"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ]
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:attendo_app/services/FCMTokenService.dart';
 import 'package:attendo_app/services/username_generator.dart';
 import 'package:attendo_app/services/username_service.dart';
 import 'package:bloc/bloc.dart';
@@ -15,7 +16,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final FirebaseAuth _firebaseAuth;
   final FirebaseFirestore _firebaseFirestore;
   final UsernameService _usernameService;
-  AuthBloc(this._firebaseAuth, this._firebaseFirestore, this._usernameService) : super(AuthInitial()) {
+  final FCMTokenService _fcmTokenService;
+  AuthBloc(this._firebaseAuth, this._firebaseFirestore, this._usernameService,
+      this._fcmTokenService)
+      : super(AuthInitial()) {
     on<SignInEvent>(_onSignIn);
     on<SignUpEvent>(_onSignUp);
     on<GoogleSignInEvent>(_onGoogleSignIn);
@@ -27,11 +31,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       UserCredential userCredential =
           await _firebaseAuth.signInWithEmailAndPassword(
               email: event.email, password: event.password);
+
+      final user = userCredential.user;
+
+      //save FCM Token, listen for the change of token
+      await _fcmTokenService.saveUserTokenToFirestore(user!.uid);
+      _fcmTokenService.setupTokenRefresh(user.uid);
+
+
       // if (userCredential.user?.emailVerified == true) {
       emit(AuthSignInSuccess());
       // } else {
       //   emit(AuthSignInError('Please verify your email before logging in'));
       // }
+
     } on FirebaseAuthException catch (e) {
       print('LOGIN ERROR: ' + e.toString());
       switch (e.code) {
@@ -56,11 +69,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   FutureOr<void> _onSignUp(SignUpEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
-      bool isUsernameExisted = await _usernameService.isUsernameTaken(event.username);
-      if(isUsernameExisted){
+      bool isUsernameExisted =
+          await _usernameService.isUsernameTaken(event.username);
+      if (isUsernameExisted) {
         emit(AuthSignInError('Username already existed'));
         return;
-      } 
+      }
       UserCredential userCredential =
           await _firebaseAuth.createUserWithEmailAndPassword(
               email: event.email, password: event.password);
@@ -114,12 +128,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           await _firebaseAuth.signInWithCredential(authCredential);
       User? user = userCredential.user;
       if (user != null) {
-
         //create random username
-        final baseName = user.displayName?? user.email?.split('@')[0] ?? 'user';
+        final baseName =
+            user.displayName ?? user.email?.split('@')[0] ?? 'user';
         final username = await UsernameGenerator().generateUsername(baseName);
 
-        await _createUserInFireStore(user,username);
+        await _createUserInFireStore(user, username);
+
+        //save FCM Token, listen for the change of token
+        await _fcmTokenService.saveUserTokenToFirestore(user.uid);
+
+        _fcmTokenService.setupTokenRefresh(user.uid);
       }
       await _firebaseAuth.signInWithCredential(authCredential);
 
@@ -142,4 +161,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       'phoneNumber': user.phoneNumber,
     }));
   }
+
+
 }
