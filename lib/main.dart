@@ -25,10 +25,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
       options: const FirebaseOptions(
-    apiKey: "AIzaSyAtxrh0b0F53TUnDKebBJmXDsll1nBII5g",
-    appId: "1:939882538884:android:b63034a8424e9a1e745fd1",
-    messagingSenderId: "939882538884",
-    projectId: "attendoapp-8509f",
+    
   ));
   final todayActivityService = TodayActivityService(FirebaseFirestore.instance);
   final usernameService = UsernameService(FirebaseFirestore.instance);
