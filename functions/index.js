@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
+const {DateTime} = require("luxon");
 admin.initializeApp();
 const db = admin.firestore();
 
@@ -73,187 +74,125 @@ exports.checkAndSendActivityReminders = functions.pubsub
     .schedule("every 10 minutes")
     .timeZone("Asia/Saigon")
     .onRun(async (context) => {
-      const now = new Date();
-      const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
-      const seventyMinutesLater = new Date(now.getTime() + 70 * 60 * 1000);
+      const now = DateTime.now().setZone("Asia/Saigon");
+      const oneHourLater = now.plus({hours: 1}).set({day: 1, month: 1, year: 2000});
+      const seventyMinutesLater = now.plus({minutes: 70}).set({day: 1, month: 1, year: 2000});
 
-      const formatTimeToString = (date) => {
-        const formatter = new Intl.DateTimeFormat("en-US", {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
-          timeZone: "Asia/Saigon",
-        });
-        const parts = formatter.formatToParts(date);
-        let hours = parts.find((part) => part.type === "hour").value;
-        const minutes = parts.find((part) => part.type === "minute").value;
-
-        if (hours >= 24) {
-          hours = hours - 24;
-        }
-        return `${String(hours).padStart(2, "0")}:${minutes}`;
-      };
-
-      const nowStr = formatTimeToString(now);
-      const oneHourLaterStr = formatTimeToString(oneHourLater);
-      const seventyMinutesLaterStr = formatTimeToString(seventyMinutesLater);
-      console.log("Calculated Time:");
-      console.log(`Now: ${nowStr}`);
-      console.log(`oneHourLater: ${oneHourLaterStr}`);
-      console.log(`seventyMinutesLater: ${seventyMinutesLaterStr}`);
-
-
-      console.log("Running checkAndSendActivityReminders function...");
+      console.log("Current Time: ", now.toISO());
+      // In giá trị sau khi cộng thêm thời gian
+      console.log("oneHourLater:", oneHourLater.toISO());
+      console.log("seventyMinutesLater:", seventyMinutesLater.toISO());
+      const oneHourLaterTimestamp = admin.firestore.Timestamp.fromDate(oneHourLater.toJSDate());
+      const seventyMinutesLaterTimestamp = admin.firestore.Timestamp.fromDate(seventyMinutesLater.toJSDate());
 
       try {
-        console.log("Starting activity querying...");
+      // Query activities from firestore
+        const activitiesRef = admin.firestore().collectionGroup("activities");
+        const snapshot = await activitiesRef
+            .where("actTime", ">=", oneHourLaterTimestamp)
+            .where("actTime", "<=", seventyMinutesLaterTimestamp)
+            .get();
 
-        // Bước 1: Khởi tạo reference Firestore
-        let activitiesRef;
-        try {
-          activitiesRef = admin.firestore().collectionGroup("activities");
-          console.log("Activities collection reference initialized.");
-        } catch (error) {
-          console.error("Error initializing activities reference:", error.message);
-          throw error; // Dừng lại nếu lỗi khởi tạo Firestore reference
-        }
-
-        // Bước 2: Thực hiện truy vấn Firestore
-        let snapshot;
-        try {
-          console.log(`Searching for activities between ${oneHourLaterStr} and ${seventyMinutesLaterStr}`);
-          snapshot = await activitiesRef
-              .where("actTime", ">=", oneHourLaterStr)
-              .where("actTime", "<=", seventyMinutesLaterStr)
-              .get();
-          console.log("Query executed successfully.");
-        } catch (error) {
-          console.error("Error executing Firestore query:", error.message);
-          throw error; // Dừng lại nếu truy vấn thất bại
-        }
-
-        // Bước 3: Kiểm tra kết quả truy vấn
         if (snapshot.empty) {
-          console.log("No activities found between 60 to 70 minutes from now.");
+          console.log("No activities found within the range.");
           return null;
-        }
+        } else {
+          console.log(`Found ${snapshot.size} activities within the range.`);
 
-        console.log("Logging all fetched activities...");
-        snapshot.forEach((doc) => {
-          const data = doc.data();
-          console.log(`Document ID: ${doc.id}`);
-          console.log("Data:", JSON.stringify(data, null, 2)); // Log dữ liệu đầy đủ theo dạng JSON
-        });
-
-        console.log(`Found ${snapshot.size} activities matching the criteria.`);
-        console.log("Processing activities...");
-
-        // Bước 4: Xử lý từng tài liệu
-        const promises = snapshot.docs.map(async (doc) => {
-          try {
+          // Executing each document
+          const promises = snapshot.docs.map(async (doc) => {
             const activity = doc.data();
-            const activityRef = doc.ref;
+            const activitiesRef = doc.ref;
+            const groupRef = doc.ref.parent.parent;
 
             console.log(`Processing activity: ${activity.name}, ID: ${doc.id}`);
 
-            // Check if `lastNotifiedAt` exists
-            if (!activity.lastNotifiedAt) {
-              console.warn(`Activity "${activity.name}" missing lastNotifiedAt.`);
-
-              // Kiểm tra thời gian hiện tại có nằm trong khoảng cần gửi không
-              const actTime = activity.actTime; // Giả định `actTime` là định dạng HH:mm
-              if (actTime < oneHourLaterStr || actTime > seventyMinutesLaterStr) {
-                console.warn(
-                    `Activity "${activity.name}" (actTime: ${actTime}) is out of notification window (${oneHourLaterStr} - ${seventyMinutesLaterStr}), skipping.`,
-                );
-                return null;
-              }
-            } else {
-              // Nếu đã có `lastNotifiedAt`, kiểm tra xem thông báo đã được gửi trong 10 phút qua chưa
-              const lastNotifiedTime = activity.lastNotifiedAt.toDate();
-              console.log(
-                  `Last notified time for activity "${activity.name}": ${lastNotifiedTime.toISOString()}`,
-              );
-
-              if (now - lastNotifiedTime < 10 * 60 * 1000) {
-                console.warn(
-                    `Notification recently sent for activity "${activity.name}", skipping.`,
-                );
+            // Check lastNotifiedAt
+            if (activity.lastNotifiedAt && activity.lastNotifiedAt instanceof admin.firestore.Timestamp) {
+              const lastNotifiedAt = activity.lastNotifiedAt.toDate();
+              if (now - lastNotifiedAt < 10 * 60 * 1000) {
+                console.log(`Activity "${activity.name} was notified recently, skipping`);
                 return null;
               }
             }
 
-            // Bước 5: Fetch group data
-            let groupDoc;
-            try {
-              console.log(`Fetching group data for group ID: ${activity.groupId}`);
-              groupDoc = await db.collection("groups").doc(activity.groupId).get();
+            // Get group data
+            const groupDoc = await groupRef.get();
+            // console.log(`Group ${groupRef.id} has ${groupData.member.length} members`);
 
-              if (!groupDoc.exists) {
-                console.error(`Group with ID ${activity.groupId} not found.`);
-                return null;
-              }
-
-              const groupData = groupDoc.data();
-              if (!groupData || !groupData.member || groupData.member.length === 0) {
-                console.error(`No members found in group ID: ${activity.groupId}`);
-                return null;
-              }
-
-              console.log(`Group ID: ${activity.groupId} has ${groupData.member.length} members.`);
-            } catch (error) {
-              console.error("Error fetching group data:", error.message);
-              return null; // Nếu có lỗi khi lấy group data thì bỏ qua activity này
+            if (!groupDoc.exists) {
+              console.error(`Group document does not exist for activity Id: ${doc.id}`);
+              return null;
             }
 
-            // Bước 6: Send notifications
-            try {
-              const notifications = groupDoc.data().member.map(async (member) => {
-                console.log(`Sending notification to member: ${member.userId}, token: ${member.token}`);
-                const message = {
-                  notification: {
-                    title: `Reminder: ${activity.name}`,
-                    body: `Your activity "${activity.name}" starts at ${new Date(activity.actTime.seconds * 1000).toLocaleString()}!`,
-                  },
-                  token: member.token,
-                };
+            const groupData = groupDoc.data();
 
-                try {
-                  await admin.messaging().send(message);
-                  console.log(`Notification successfully sent to ${member.userId}`);
-                } catch (error) {
-                  console.error(`Error sending notification to ${member.userId}:`, error.message);
+            // Fetch tokens from users collection
+            const userPromises = groupData.member.map(async (member) => {
+              try {
+                const userDoc = await admin.firestore().collection("users").doc(member.userId).get();
+                if (!userDoc.exists) {
+                  console.warn(`User ${member.userId} does not exist, skipping notification`);
+                  return null;
                 }
-              });
 
-              await Promise.all(notifications);
-              console.log("Notifications sent to all members.");
-            } catch (error) {
-              console.error("Error sending notifications:", error.message);
+                const userData = userDoc.data();
+                if (!userData.fcmToken) {
+                  console.warn(`No token found for user ${member.userId}, skipping notification`);
+                  return null;
+                }
+
+                return {userId: member.userId, token: userData.fcmToken};
+              } catch (error) {
+                console.error(`Error fetching user ${member.userId}: ${error.message}`);
+                return null;
+              }
+            });
+
+            const usersWithTokens = (await Promise.all(userPromises)).filter((user) => user !== null);
+
+            if (usersWithTokens.length === 0) {
+              console.log(`No valid tokens found for group ${groupRef.id}`);
+              return null;
             }
 
-            // Bước 7: Cập nhật lastNotifiedAt
-            try {
-              await activityRef.update({
-                lastNotifiedAt: admin.firestore.Timestamp.now(),
-              });
-              console.log(`Activity "${activity.name}" updated with lastNotifiedAt.`);
-            } catch (error) {
-              console.error("Error updating lastNotifiedAt:", error.message);
-            }
-          } catch (error) {
-            console.error(`Error processing activity "${doc.id}":`, error.message);
-          }
-        });
+            // Send notifications
+            const notifications = usersWithTokens.map(async (user) => {
+              const message = {
+                notification: {
+                  title: `Reminder: ${activity.name}`,
+                  body: `Your activity "${activity.name}" starts at ${new Date(activity.actTime.seconds * 1000)
+                      .toLocaleDateString("en-US", {timeZone: "Asia/Saigon"})
+                  }!`,
+                },
+                token: user.token,
+              };
+              try {
+                await admin.messaging().send(message);
+                console.log(`Notification send to ${user.userId} for activity "${activity.name}"`);
+              } catch (error) {
+                console.error(`Error sending notification to ${user.userId}: ${error.message}`);
+              }
+            });
 
-        // Chờ tất cả các thông báo hoàn thành
-        await Promise.all(promises);
-        console.log("All notifications processed successfully.");
+            // Wait for all notifications to be sent
+            await Promise.all(notifications);
+
+            // Update lastNotifiedAt
+            await activitiesRef.update({
+              lastNotifiedAt: admin.firestore.Timestamp.now(),
+            });
+            console.log(`Activity "${activity.name}" updated with lastNotifiedAt`);
+
+            await Promise.all(promises);
+            console.log("All activities processed successfully");
+          });
+          await Promise.all(promises);
+          console.log("All activities processed successfully");
+        }
       } catch (error) {
-        console.error("Error in main try-catch block:", error.message);
+        console.error("Error processing activities: ", error.message);
       }
-
-
-      console.log("checkAndSendActivityReminders function completed.");
+      console.log("checkAndSendActivityReminders function completes");
       return null;
     });
