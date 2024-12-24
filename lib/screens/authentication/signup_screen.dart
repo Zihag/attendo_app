@@ -27,7 +27,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
         iconTheme: IconThemeData(
           color: Colors.blue,
         ),
-        
       ),
       backgroundColor: Colors.grey[300],
       body: BlocListener<AuthBloc, AuthState>(
@@ -48,13 +47,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
-                  Icons.check_circle_outlined,
-                  size: 100,
-                  color: Colors.blue,
+                Image.asset(
+                  'assets/images/icon.png',
+                  fit: BoxFit.fill,
+                  height: 150,
                 ),
                 const SizedBox(
-                  height: 30,
+                  height: 10,
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
@@ -63,7 +62,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     children: [
                       Text(
                         "Create an account",
-                        style: TextStyle(color: Colors.grey[700],fontWeight: FontWeight.bold,fontSize: 30),
+                        style: TextStyle(
+                            color: Colors.grey[700],
+                            fontWeight: FontWeight.bold,
+                            fontSize: 30),
                       )
                     ],
                   ),
@@ -116,7 +118,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       return MyButton(
                         onTap: () {
                           context.read<AuthBloc>().add(SignUpEvent(
-                              _emailController.text, _passwordController.text, _usernameController.text));
+                              _emailController.text,
+                              _passwordController.text,
+                              _usernameController.text));
                         },
                         text: 'Sign up',
                       );
@@ -126,7 +130,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Already have an account?",style: TextStyle(color: Colors.grey[700]),),
+                    Text(
+                      "Already have an account?",
+                      style: TextStyle(color: Colors.grey[700]),
+                    ),
                     TextButton(
                       onPressed: () {
                         Navigator.pop(context);

@@ -7,6 +7,7 @@ import 'package:attendo_app/widgets/my_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
@@ -71,15 +72,11 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
-                  height: 50,
+                  height: 25,
                 ),
-                const Icon(
-                  Icons.check_circle_outlined,
-                  size: 100,
-                  color: Colors.blue,
-                ),
+                Image.asset('assets/images/icon.png',fit: BoxFit.fill,height: 150,),
                 const SizedBox(
-                  height: 30,
+                  height: 10,
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
