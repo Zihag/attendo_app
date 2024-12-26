@@ -98,7 +98,7 @@ class MyApp extends StatelessWidget {
 
 ThemeData _buildTheme(brightness) {
   var baseTheme =
-      ThemeData(brightness: brightness, colorSchemeSeed: Colors.cyan);
+      ThemeData(brightness: brightness, colorSchemeSeed: Colors.white);
 
   return baseTheme.copyWith(
       textTheme: GoogleFonts.openSansTextTheme(baseTheme.textTheme));

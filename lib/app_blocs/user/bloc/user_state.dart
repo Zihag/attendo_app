@@ -14,6 +14,7 @@ class UserLoaded extends UserState {
 
   String get displayName => userData['displayName'] ?? '';
   String get username => userData['username'] ?? 'User';
+  String get email => userData['email'] ?? 'Email';
 }
 
 class UserError extends UserState{

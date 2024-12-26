@@ -1,32 +1,43 @@
+import 'package:attendo_app/app_colors/app_colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class CustomCircleAvatar extends StatelessWidget {
   final String photoURL;
-  const CustomCircleAvatar({super.key, required this.photoURL});
+  final double width;
+  final double height;
+  const CustomCircleAvatar({super.key, required this.photoURL, required this.width, required this.height});
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: width,
+      height: height,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            spreadRadius: 2,
-            blurRadius: 8,
-            offset: Offset(0, 4),
-          )
-        ]
+        gradient: LinearGradient(colors: [
+          Colors.green,
+          AppColors.cyan
+        ],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight)
       ),
       
-      child: CircleAvatar(
-        backgroundColor: Colors.white,
-        child: CircleAvatar(
-          backgroundImage: NetworkImage(photoURL),
-          radius: 23,
+      child: Padding(
+        padding: const EdgeInsets.all(2.0),
+        child: Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Theme.of(context).scaffoldBackgroundColor,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(2.0),
+            child: CircleAvatar(
+              backgroundImage: NetworkImage(photoURL),
+              radius: 23,
+            ),
+          ),
         ),
-        radius: 27,
       ),
     );
   }

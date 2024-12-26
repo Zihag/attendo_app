@@ -69,7 +69,7 @@ class _MainScreenState extends State<MainScreen> {
               index: 2,
               animationDuration: Duration(milliseconds: 300),
               height: 60.0,
-              color: AppColors.cyan,
+              color: Colors.white,
             ),
           )
         ],

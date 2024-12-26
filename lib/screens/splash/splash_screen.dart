@@ -29,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
         children: [
           Center(
             child: LottieBuilder.asset(
-              "assets/Lottie/animation.json",
+              "assets/Lottie/splash.json",
               height: 300,
               repeat: false,
             ),

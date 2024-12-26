@@ -14,19 +14,20 @@ class ChoiceButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 30),
         height: height,
         width: width,
-        
         margin: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
-            color: color, borderRadius: BorderRadius.circular(8),),
+            color: color, borderRadius: BorderRadius.circular(25),),
         child: Center(
-          child: Text(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            child: Text(
             text,
             style: TextStyle(
                 color: textColor, fontWeight: FontWeight.bold),
-          ),
+          ),)
+          
         ),
       ),
     );

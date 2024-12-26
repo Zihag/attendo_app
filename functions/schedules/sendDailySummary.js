@@ -18,6 +18,7 @@ exports.sendDailySummary = functions.pubsub
           return null;
         }
 
+
         // Gom nhóm các hoạt động theo groupId
         const notifications = {};
         todayActivities.forEach((activity) => {
@@ -26,7 +27,12 @@ exports.sendDailySummary = functions.pubsub
           if (!notifications[groupId]) {
             notifications[groupId] = [];
           }
-          notifications[groupId].push(activity.name);
+
+          // Get each activity field
+          notifications[groupId].push({
+            name: activity.name,
+            actTime: activity.actTime,
+          });
         });
 
         console.log(`Notifications prepared for ${Object.keys(notifications).length} groups.`);
@@ -35,6 +41,7 @@ exports.sendDailySummary = functions.pubsub
         const promises = Object.entries(notifications).map(async ([groupId, activities]) => {
           const groupDoc = await db.collection("groups").doc(groupId).get();
           const groupData = groupDoc.data();
+          const groupName = groupData.name;
 
           if (!groupData || !Array.isArray(groupData.member)) {
             console.log(`No valid members found for group: ${groupId}`);
@@ -64,8 +71,18 @@ exports.sendDailySummary = functions.pubsub
 
               const message = {
                 notification: {
-                  title: `Today's Activities`,
-                  body: `You have ${activities.length} activities today: ${activities.join(", ")}`,
+                  title: `Today's Activities in group ${groupName} 🔥`,
+                  body: `You have ${activities.length} activities today:\n${activities
+                      .map((activity) =>
+                        `${activity.name}   🕐 ${new Date(activity.actTime.seconds * 1000)
+                            .toLocaleTimeString("en-US", {
+                              timeZone: "Asia/Saigon",
+                              hour12: false,
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}`,
+                      )
+                      .join("\n")}`,
                 },
                 token: userData.fcmToken,
               };

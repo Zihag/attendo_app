@@ -1,6 +1,7 @@
 import 'package:attendo_app/app_blocs/activity/bloc/activity_bloc.dart';
 import 'package:attendo_app/app_blocs/group/bloc/group_bloc.dart';
 import 'package:attendo_app/app_blocs/groupdetail/bloc/groupdetail_bloc.dart';
+import 'package:attendo_app/app_colors/app_colors.dart';
 import 'package:attendo_app/screens/activity/create_activity_screen.dart';
 import 'package:attendo_app/screens/invite/invite_screen.dart';
 import 'package:attendo_app/widgets/custom_group_listtile.dart';
@@ -40,7 +41,7 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
           //Remove padding between leading icon and text
           titleSpacing: 0,
 
-          backgroundColor: Colors.blue[200],
+          backgroundColor: AppColors.cyan,
           title: BlocBuilder<GroupDetailBloc, GroupDetailState>(
             builder: (context, state) {
               if (state is GroupDetailLoading) {
@@ -155,6 +156,7 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
           ),
         ),
         floatingActionButton: FloatingActionButton(
+          backgroundColor: AppColors.cyan,
           onPressed: () {
             Navigator.push(
                 context,
