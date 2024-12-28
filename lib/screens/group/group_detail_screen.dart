@@ -1,15 +1,15 @@
 import 'package:attendo_app/app_blocs/activity/bloc/activity_bloc.dart';
-import 'package:attendo_app/app_blocs/group/bloc/group_bloc.dart';
 import 'package:attendo_app/app_blocs/groupdetail/bloc/groupdetail_bloc.dart';
 import 'package:attendo_app/app_colors/app_colors.dart';
 import 'package:attendo_app/screens/activity/create_activity_screen.dart';
 import 'package:attendo_app/screens/invite/invite_screen.dart';
-import 'package:attendo_app/widgets/custom_group_listtile.dart';
+import 'package:attendo_app/widgets/circle_avatar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:lottie/lottie.dart';
+import 'package:fw_tab_bar/fw_tab_bar.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class GroupDetailScreen extends StatefulWidget {
   final String groupId;
@@ -22,7 +22,30 @@ class GroupDetailScreen extends StatefulWidget {
   State<GroupDetailScreen> createState() => _GroupDetailScreenState();
 }
 
-class _GroupDetailScreenState extends State<GroupDetailScreen> {
+class _GroupDetailScreenState extends State<GroupDetailScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+
+    _tabController.addListener(() {
+      if (_tabController.indexIsChanging) {
+        setState(() {}); // Đồng bộ giao diện khi tab thay đổi
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _tabController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -38,10 +61,12 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
       ],
       child: Scaffold(
         appBar: AppBar(
+          //Remove appbar color changed when scroll
+          surfaceTintColor: Colors.transparent,
           //Remove padding between leading icon and text
           titleSpacing: 0,
-
-          backgroundColor: AppColors.cyan,
+          toolbarHeight: 150,
+          backgroundColor: Colors.grey[300],
           title: BlocBuilder<GroupDetailBloc, GroupDetailState>(
             builder: (context, state) {
               if (state is GroupDetailLoading) {
@@ -49,34 +74,33 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
               } else if (state is GroupDetailLoaded) {
                 final members = state.groupData['member'] as List<dynamic>?;
                 final memberCount = members?.length ?? 0;
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                      backgroundImage: NetworkImage(
-                        'https://i.pinimg.com/564x/e2/dc/3c/e2dc3cb5cb84093a9496f21ba5cc6743.jpg',
+                return Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      CustomCircleAvatar(
+                        width: 70,
+                        height: 70,
+                        photoURL:
+                            'https://i.pinimg.com/564x/e2/dc/3c/e2dc3cb5cb84093a9496f21ba5cc6743.jpg',
                       ),
-                    ),
-                    SizedBox(
-                      width: 8,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          '${state.groupData['name'] ?? 'Unknown'}',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.bold),
+                      Text(
+                        '${state.groupData['name'] ?? 'Unknown'}',
+                        style: GoogleFonts.openSans(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
-                        Text(
-                          '$memberCount member${memberCount == 1 ? '' : 's'}',
-                          style: TextStyle(fontSize: 12),
-                        )
-                      ],
-                    ),
-                  ],
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        '$memberCount member${memberCount == 1 ? '' : 's'}',
+                        style: GoogleFonts.openSans(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                 );
               } else if (state is GroupDetailError) {
                 return Center(child: Text(state.message));
@@ -93,65 +117,100 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                           builder: (context) =>
                               InviteScreen(groupId: widget.groupId)));
                 },
-                icon: Icon(Icons.share)),
-            IconButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              InviteScreen(groupId: widget.groupId)));
-                },
                 icon: Icon(Icons.info))
           ],
         ),
-        body: BlocListener<ActivityBloc, ActivityState>(
-          listener: (context, state) {
-            if (state is ActivityLoaded) {
-              setState(() {});
-            } else if (state is ActivityError) {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(state.message)));
-            }
-          },
+        body: Container(
+          decoration: BoxDecoration(color: Colors.grey[300]),
           child: Column(
             children: [
-              BlocBuilder<ActivityBloc, ActivityState>(
-                builder: (context, state) {
-                  if (state is ActivityLoading) {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } else if (state is ActivityLoaded) {
-                    if (state.activities.isEmpty) {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text("Let's create activity"),
-                        ],
+              Container(
+                height: 100,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(25),
+                        topRight: Radius.circular(25))),
+                child: Center(
+                  child: TabBarWidget(
+                    firstTab: 'Today',
+                    secondTab: 'All',
+                    currentIndex: _tabController.index,
+                    onTabChanged: (int index) {
+                      _tabController.animateTo(
+                          index); // Đồng bộ TabController khi người dùng nhấn
+                    },
+                  ),
+                ),
+              ),
+              BlocListener<ActivityBloc, ActivityState>(
+                listener: (context, state) {
+                  if (state is ActivityLoaded) {
+                    setState(() {});
+                  } else if (state is ActivityError) {
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(state.message)));
+                  }
+                },
+                child: BlocBuilder<ActivityBloc, ActivityState>(
+                  builder: (context, state) {
+                    if (state is ActivityLoading) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (state is ActivityLoaded) {
+                      if (state.activities.isEmpty) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("Let's create activity"),
+                          ],
+                        );
+                      }
+                      return Expanded(
+                        child:
+                            TabBarView(controller: _tabController,
+                            physics: NeverScrollableScrollPhysics(),
+                             children: [
+                          Container(
+                            color: Colors.white,
+                            child: ListView.builder(
+                              itemCount: state.activities.length,
+                              itemBuilder: (context, index) {
+                                final activity = state.activities[index];
+                                return ListTile(
+                                  title: Text(activity['name'] ?? 'No name'),
+                                  subtitle: Text(activity['description'] ??
+                                      'No description'),
+                                );
+                              },
+                            ),
+                          ),
+                          Container(
+                            color: Colors.white,
+                            child: ListView.builder(
+                              itemCount: state.activities.length,
+                              itemBuilder: (context, index) {
+                                final activity = state.activities[index];
+                                return ListTile(
+                                  title: Text(activity['name'] ?? 'No name'),
+                                  subtitle: Text(activity['description'] ??
+                                      'No description'),
+                                );
+                              },
+                            ),
+                          ),
+                        ]),
+                      );
+                    } else if (state is ActivityError) {
+                      return Center(
+                        child: Text(state.message),
                       );
                     }
-                    return Expanded(
-                      child: ListView.builder(
-                        itemCount: state.activities.length,
-                        itemBuilder: (context, index) {
-                          final activity = state.activities[index];
-                          return ListTile(
-                            title: Text(activity['name'] ?? 'No name'),
-                            subtitle: Text(
-                                activity['description'] ?? 'No description'),
-                          );
-                        },
-                      ),
-                    );
-                  } else if (state is ActivityError) {
-                    return Center(
-                      child: Text(state.message),
-                    );
-                  }
-                  return SizedBox();
-                },
-              )
+                    return SizedBox();
+                  },
+                ),
+              ),
             ],
           ),
         ),

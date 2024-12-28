@@ -83,7 +83,7 @@ class TodayActivityListTile extends StatelessWidget {
                             child: Text(
                             activityName,
                               style: GoogleFonts.openSans(
-                                fontSize: 20,
+                                fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
                               overflow: TextOverflow.ellipsis,

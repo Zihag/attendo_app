@@ -1,3 +1,4 @@
+import 'package:attendo_app/app_colors/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -32,8 +33,15 @@ class CustomGroupListTile extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(15),
+              // boxShadow: [
+              //   BoxShadow(
+              //     color: Colors.black.withOpacity(0.2), 
+              //     offset: const Offset(0, 4),
+              //     blurRadius: 6,
+              //   ),
+              // ],
             ),
-            child:  Padding(
+            child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -50,20 +58,43 @@ class CustomGroupListTile extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(width: 10,),
-                      Expanded(child: 
-                      Column(
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                          child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(title, style: GoogleFonts.openSans(fontWeight: FontWeight.bold, fontSize: 16),),
-                          Text(description, style: GoogleFonts.openSans(fontSize: 13, fontWeight: FontWeight.bold),),
-                          SizedBox(height: 20,),
+                          Text(
+                            title,
+                            style: GoogleFonts.openSans(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                                overflow: TextOverflow.ellipsis
+                          ),
+                          Text(
+                            description,
+                            style: GoogleFonts.openSans(
+                                fontSize: 13, fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              Text(memberCount, style: GoogleFonts.openSans(fontSize: 13, fontWeight: FontWeight.bold),),
-                              SizedBox(width: 10,),
-                              Text(actCount, style: GoogleFonts.openSans(fontSize: 13, fontWeight: FontWeight.bold),)
+                              Text(
+                                memberCount,
+                                style: GoogleFonts.openSans(
+                                    fontSize: 13, fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                actCount,
+                                style: GoogleFonts.openSans(
+                                    fontSize: 13, fontWeight: FontWeight.bold),
+                              )
                             ],
                           )
                         ],

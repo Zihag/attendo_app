@@ -94,6 +94,20 @@ class TodayActivityService {
         }
       }
     }
+
+    //Sort activities by actTime
+    todayActivities.sort((a,b) {
+      final timeA = DateTime(
+        now.year,
+        now.month,now.day,int.parse(a['actTime'].split(':')[0]),
+        int.parse(a['actTime'].split(':')[1])
+      );
+      final timeB = DateTime(
+        now.year,now.month,now.day,int.parse(b['actTime'].split(':')[0]),
+        int.parse(b['actTime'].split(':')[1]),
+      );
+      return timeA.compareTo(timeB);
+    });
     return todayActivities;
   }
 }
