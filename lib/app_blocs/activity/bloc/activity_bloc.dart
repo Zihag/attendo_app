@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:attendo_app/services/activity_status_service.dart';
+import 'package:attendo_app/services/convert_service.dart';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,8 +20,8 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
   }
 
   //parse act TimeOfDay to DateTime
-  DateTime timeOfDayToDateTime(TimeOfDay timeOfDay){
-    return DateTime(2000,1,1,timeOfDay.hour, timeOfDay.minute);
+  DateTime timeOfDayToDateTime(TimeOfDay timeOfDay) {
+    return DateTime(2000, 1, 1, timeOfDay.hour, timeOfDay.minute);
   }
 
   FutureOr<void> _onCreateActivity(
@@ -65,18 +67,59 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
           .orderBy('create_at', descending: true)
           .get();
 
-      final activities = querySnapshot.docs
-          .map((doc) => {
-                'id': doc.id,
-                'name': doc['name'],
-                'description': doc['description'] ?? '',
-                'frequency': doc['frequency'],
-                'onceDate': doc['onceDate'],
-                'weeklyDate': doc['weeklyDate'],
-                'monthlyDate': doc['monthlyDate'],
-                'actTime': doc['actTime'],
-              })
-          .toList();
+      final activities = querySnapshot.docs.map((doc) {
+        //Convert TimeStamp to String
+        final Timestamp actTimeStamp = doc['actTime'];
+        final String actTime =
+            ConvertService.convertTimestampToTime(actTimeStamp);
+        final String? monthlyDate = doc['monthlyDate'] != null
+            ? ConvertService.timestampToDay(doc['monthlyDate']) + ' Monthly'
+            : null;
+        final String? onceDate = doc['onceDate'] != null
+            ? ConvertService.timestampToDate(doc['onceDate'])
+            : null;
+        final String? weeklyDate = doc['weeklyDate'] != null
+            ? ConvertService.weeklyDateToString(doc['weeklyDate'])
+            : null;
+
+        final frequency = doc['frequency'];
+        String activeDate = 'None';
+        String status = 'None';
+
+        switch (frequency) {
+          case 'Daily':
+            activeDate = 'Daily';
+            status = ActivityStatusService.getStatusForDaily();
+            break;
+          case 'Once':
+            activeDate = onceDate!;
+            status = ActivityStatusService.getStatusForOnce(onceDate);
+            break;
+          case 'Weekly':
+            activeDate = weeklyDate!;
+            status = ActivityStatusService.getStatusForWeekly(weeklyDate);
+            break;
+          case 'Monthly':
+            activeDate = monthlyDate!;
+            status = ActivityStatusService.getStatusForMonthly(monthlyDate);
+            break;
+          default:
+            status = 'None';
+        }
+
+        return {
+          'id': doc.id,
+          'name': doc['name'],
+          'description': doc['description'] ?? '',
+          'frequency': frequency,
+          'onceDate': onceDate,
+          'weeklyDate': weeklyDate,
+          'monthlyDate': monthlyDate,
+          'actTime': actTime, // Đã chuyển đổi thành chuỗi HH:mm
+          'activeDate': activeDate,
+          'status': status,
+        };
+      }).toList();
 
       print("Activities: $activities");
       emit(ActivityLoaded(activities));

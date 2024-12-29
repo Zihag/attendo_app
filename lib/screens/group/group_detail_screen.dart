@@ -4,6 +4,8 @@ import 'package:attendo_app/app_colors/app_colors.dart';
 import 'package:attendo_app/screens/activity/create_activity_screen.dart';
 import 'package:attendo_app/screens/invite/invite_screen.dart';
 import 'package:attendo_app/widgets/circle_avatar.dart';
+import 'package:attendo_app/widgets/group_detail_screen/all_activity_card.dart';
+import 'package:attendo_app/widgets/group_detail_screen/today_activity_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
@@ -129,8 +131,8 @@ class _GroupDetailScreenState extends State<GroupDetailScreen>
                 decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(25),
-                        topRight: Radius.circular(25))),
+                        topLeft: Radius.circular(50),
+                        topRight: Radius.circular(50))),
                 child: Center(
                   child: TabBarWidget(
                     firstTab: 'Today',
@@ -140,6 +142,15 @@ class _GroupDetailScreenState extends State<GroupDetailScreen>
                       _tabController.animateTo(
                           index); // Đồng bộ TabController khi người dùng nhấn
                     },
+                    backgroundBoxDecoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50),
+                        color: AppColors.cyan),
+                    selectedTabTextStyle: GoogleFonts.openSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                    unselectedTabTextStyle:
+                        GoogleFonts.openSans(fontSize: 16, color: Colors.black),
                   ),
                 ),
               ),
@@ -155,52 +166,60 @@ class _GroupDetailScreenState extends State<GroupDetailScreen>
                 child: BlocBuilder<ActivityBloc, ActivityState>(
                   builder: (context, state) {
                     if (state is ActivityLoading) {
-                      return Center(
-                        child: CircularProgressIndicator(),
+                      return Expanded(
+                        child: Container(
+                            color: Colors.white,
+                            child: Center(child: CircularProgressIndicator())),
                       );
                     } else if (state is ActivityLoaded) {
                       if (state.activities.isEmpty) {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text("Let's create activity"),
-                          ],
+                        return Expanded(
+                          child: Container(
+                            color: Colors.white,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text("Let's create activity"),
+                              ],
+                            ),
+                          ),
                         );
                       }
                       return Expanded(
-                        child:
-                            TabBarView(controller: _tabController,
+                        child: TabBarView(
+                            controller: _tabController,
                             physics: NeverScrollableScrollPhysics(),
-                             children: [
-                          Container(
-                            color: Colors.white,
-                            child: ListView.builder(
-                              itemCount: state.activities.length,
-                              itemBuilder: (context, index) {
-                                final activity = state.activities[index];
-                                return ListTile(
-                                  title: Text(activity['name'] ?? 'No name'),
-                                  subtitle: Text(activity['description'] ??
-                                      'No description'),
-                                );
-                              },
-                            ),
-                          ),
-                          Container(
-                            color: Colors.white,
-                            child: ListView.builder(
-                              itemCount: state.activities.length,
-                              itemBuilder: (context, index) {
-                                final activity = state.activities[index];
-                                return ListTile(
-                                  title: Text(activity['name'] ?? 'No name'),
-                                  subtitle: Text(activity['description'] ??
-                                      'No description'),
-                                );
-                              },
-                            ),
-                          ),
-                        ]),
+                            children: [
+                              Container(
+                                color: Colors.white,
+                                child: ListView.builder(
+                                  itemCount: state.activities.length,
+                                  itemBuilder: (context, index) {
+                                    final activity = state.activities[index];
+                                    return TodayActivityCard(
+                                        actName: activity['name'],
+                                        description: activity['description'],
+                                        time: activity['actTime'],
+                                        frequency: activity['frequency']);
+                                  },
+                                ),
+                              ),
+                              Container(
+                                color: Colors.white,
+                                child: ListView.builder(
+                                  itemCount: state.activities.length,
+                                  itemBuilder: (context, index) {
+                                    final activity = state.activities[index];
+                                    return AllActivityCard(
+                                        actName: activity['name'],
+                                        description: activity['description'],
+                                        time: activity['actTime'],
+                                        frequency: activity['activeDate'],
+                                        status: activity['status'],);
+                                  },
+                                ),
+                              ),
+                            ]),
                       );
                     } else if (state is ActivityError) {
                       return Center(

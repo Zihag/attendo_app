@@ -1,11 +1,9 @@
 import 'package:attendo_app/app_blocs/today_activity/bloc/today_activity_bloc.dart';
 import 'package:attendo_app/screens/group/group_detail_screen.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:attendo_app/app_blocs/activity/bloc/activity_bloc.dart';
 import 'package:attendo_app/widgets/date_time_picker.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class CreateActivityScreen extends StatefulWidget {
   final String groupId;

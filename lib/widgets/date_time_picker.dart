@@ -65,6 +65,8 @@ class _DateTimePickerWidgetState extends State<DateTimePickerWidget> {
               } else {
                 selectedWeekDays.remove(index + 1);
               }
+
+              selectedWeekDays.sort();
             });
           },
         );
