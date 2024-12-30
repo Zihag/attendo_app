@@ -17,6 +17,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
     on<CreateActivity>(_onCreateActivity);
     on<LoadActivities>(_onLoadActivities);
     on<DeleteActivity>(_onDeleteActivity);
+    on<UpdateActivity>(_onUpdateActivity);
   }
 
   //parse act TimeOfDay to DateTime
@@ -118,6 +119,9 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
           'actTime': actTime, // Đã chuyển đổi thành chuỗi HH:mm
           'activeDate': activeDate,
           'status': status,
+          'onceDateOriginType': doc['onceDate'],
+          'weeklyDateOriginType': doc['weeklyDate'],
+          'monthlyDateOriginType': doc['monthlyDate'],
         };
       }).toList();
 
@@ -141,6 +145,41 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
       add(LoadActivities(groupId: event.groupId));
     } catch (e) {
       emit(ActivityError('Failed to delete activity'));
+    }
+  }
+
+  FutureOr<void> _onUpdateActivity(UpdateActivity event, Emitter<ActivityState> emit) async {
+    emit(ActivityLoading());
+    try{
+      User? user = FirebaseAuth.instance.currentUser;
+      if(user == null){
+        emit(ActivityError('User not logged in'));
+        return;
+      }
+
+      DateTime actTimeDateTime = timeOfDayToDateTime(event.actTime);
+
+      await _firebaseFirestore
+      .collection('groups')
+      .doc(event.groupId)
+      .collection('activities')
+      .doc(event.activityId)
+      .update({
+        'name': event.activityName,
+      'description': event.description ?? "",
+      'frequency': event.frequency,
+      'onceDate': event.onceDate,
+      'weeklyDate': event.weeklyDate,
+      'monthlyDate': event.monthlyDate,
+      'actTime': actTimeDateTime,
+      'updated_by': user.uid,
+      'updated_at': FieldValue.serverTimestamp(),
+      });
+
+      add(LoadActivities(groupId: event.groupId));
+      emit(ActivityUpdatedSuccess());
+    } catch (e){
+      emit(ActivityError('Failed to update activity'));
     }
   }
 }

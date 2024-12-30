@@ -20,3 +20,5 @@ final class ActivityError extends ActivityState{
   ActivityError(this.message);
 }
 final class ActivityCreatedSuccess extends ActivityState{}
+
+final class ActivityUpdatedSuccess extends ActivityState{}

@@ -2,6 +2,7 @@ import 'package:attendo_app/app_blocs/activity/bloc/activity_bloc.dart';
 import 'package:attendo_app/app_blocs/groupdetail/bloc/groupdetail_bloc.dart';
 import 'package:attendo_app/app_colors/app_colors.dart';
 import 'package:attendo_app/screens/activity/create_activity_screen.dart';
+import 'package:attendo_app/screens/activity/create_or_update_activity_screen.dart';
 import 'package:attendo_app/screens/invite/invite_screen.dart';
 import 'package:attendo_app/widgets/circle_avatar.dart';
 import 'package:attendo_app/widgets/group_detail_screen/all_activity_card.dart';
@@ -210,12 +211,31 @@ class _GroupDetailScreenState extends State<GroupDetailScreen>
                                   itemCount: state.activities.length,
                                   itemBuilder: (context, index) {
                                     final activity = state.activities[index];
-                                    return AllActivityCard(
+                                    return GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    CreateOrUpdateActivityScreen(
+                                                      groupId: widget.groupId,
+                                                      activityId:
+                                                          activity['id'],
+                                                      activityData: activity,
+                                                    )));
+                                        print(
+                                            'Navigate to Create Or Update Screen');
+                                      },
+                                      child: AllActivityCard(
                                         actName: activity['name'],
                                         description: activity['description'],
                                         time: activity['actTime'],
                                         frequency: activity['activeDate'],
-                                        status: activity['status'],);
+                                        status: activity['status'],
+                                        onEdit: (){},
+                                        onDelete: (){},
+                                      ),
+                                    );
                                   },
                                 ),
                               ),
@@ -240,7 +260,8 @@ class _GroupDetailScreenState extends State<GroupDetailScreen>
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        CreateActivityScreen(groupId: widget.groupId)));
+                        CreateOrUpdateActivityScreen(groupId: widget.groupId)));
+            print('Navigate to Create Or Update Screen');
           },
           child: Icon(Icons.add),
         ),
