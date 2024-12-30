@@ -211,8 +211,13 @@ class _GroupDetailScreenState extends State<GroupDetailScreen>
                                   itemCount: state.activities.length,
                                   itemBuilder: (context, index) {
                                     final activity = state.activities[index];
-                                    return GestureDetector(
-                                      onTap: () {
+                                    return AllActivityCard(
+                                      actName: activity['name'],
+                                      description: activity['description'],
+                                      time: activity['actTime'],
+                                      frequency: activity['activeDate'],
+                                      status: activity['status'],
+                                      onEdit: () {
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
@@ -226,15 +231,7 @@ class _GroupDetailScreenState extends State<GroupDetailScreen>
                                         print(
                                             'Navigate to Create Or Update Screen');
                                       },
-                                      child: AllActivityCard(
-                                        actName: activity['name'],
-                                        description: activity['description'],
-                                        time: activity['actTime'],
-                                        frequency: activity['activeDate'],
-                                        status: activity['status'],
-                                        onEdit: (){},
-                                        onDelete: (){},
-                                      ),
+                                      onDelete: () {},
                                     );
                                   },
                                 ),
