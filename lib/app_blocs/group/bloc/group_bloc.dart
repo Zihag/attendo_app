@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:attendo_app/services/get_timezone.dart';
 import 'package:attendo_app/services/today_activity_service.dart';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -21,7 +22,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     emit(GroupLoading());
     try {
       User? user = FirebaseAuth.instance.currentUser;
-
+      String timeZone = await GetTimeZone().getTimeZone();
       if(user == null){
         emit(GroupError('User not logged in'));
         return;
@@ -34,6 +35,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
         }],
         'adminId':user.uid,
         'create_at':FieldValue.serverTimestamp(),
+        'timeZone': timeZone,
       });
       add(LoadGroups());
     } catch (e){

@@ -1,0 +1,101 @@
+Date : 2024-12-31 02:21:21
+Directory : d:\Personal\Workspace\Flutter\attendo_app\lib
+Total : 43 files,  1647 codes, 71 comments, 116 blanks, all 1834 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| Dart     |         43 |      1,647 |         71 |        116 |      1,834 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                       | files      | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                          |         43 |      1,647 |         71 |        116 |      1,834 |
+| . (Files)                                                                                                  |          1 |          8 |          1 |         -1 |          8 |
+| app_blocs                                                                                                  |         14 |        119 |         93 |         42 |        254 |
+| app_blocs\activity                                                                                         |          3 |         99 |          2 |         11 |        112 |
+| app_blocs\activity\bloc                                                                                    |          3 |         99 |          2 |         11 |        112 |
+| app_blocs\activity_choice                                                                                  |          3 |         72 |          0 |         16 |         88 |
+| app_blocs\activity_choice\bloc                                                                             |          3 |         72 |          0 |         16 |         88 |
+| app_blocs\attendance                                                                                       |          3 |        -66 |         89 |          5 |         28 |
+| app_blocs\attendance\bloc                                                                                  |          3 |        -66 |         89 |          5 |         28 |
+| app_blocs\auth                                                                                             |          2 |         11 |          2 |         10 |         23 |
+| app_blocs\auth\bloc                                                                                        |          2 |         11 |          2 |         10 |         23 |
+| app_blocs\group                                                                                            |          1 |          1 |          0 |          0 |          1 |
+| app_blocs\group\bloc                                                                                       |          1 |          1 |          0 |          0 |          1 |
+| app_blocs\invite_member                                                                                    |          1 |          1 |          0 |          0 |          1 |
+| app_blocs\invite_member\invitation                                                                         |          1 |          1 |          0 |          0 |          1 |
+| app_blocs\invite_member\invitation\bloc                                                                    |          1 |          1 |          0 |          0 |          1 |
+| app_blocs\user                                                                                             |          1 |          1 |          0 |          0 |          1 |
+| app_blocs\user\bloc                                                                                        |          1 |          1 |          0 |          0 |          1 |
+| app_colors                                                                                                 |          1 |          5 |          0 |          1 |          6 |
+| helpers                                                                                                    |          1 |          0 |          0 |          1 |          1 |
+| screens                                                                                                    |         10 |        951 |         12 |         21 |        984 |
+| screens\activity                                                                                           |          2 |        184 |          6 |         12 |        202 |
+| screens\authentication                                                                                     |          2 |          5 |          0 |         -1 |          4 |
+| screens\group                                                                                              |          1 |         92 |          3 |          3 |         98 |
+| screens\navigation                                                                                         |          5 |        670 |          3 |          7 |        680 |
+| screens\navigation\activity                                                                                |          1 |         82 |          0 |          2 |         84 |
+| screens\navigation\home                                                                                    |          1 |        197 |          1 |          0 |        198 |
+| screens\navigation\notify                                                                                  |          1 |         16 |          1 |          2 |         19 |
+| screens\navigation\profile                                                                                 |          1 |        213 |          1 |          3 |        217 |
+| screens\navigation\setting                                                                                 |          1 |        162 |          0 |          0 |        162 |
+| services                                                                                                   |          7 |        207 |         14 |         37 |        258 |
+| widgets                                                                                                    |          9 |        357 |        -49 |         15 |        323 |
+| widgets (Files)                                                                                            |          6 |        -50 |        -52 |          2 |       -100 |
+| widgets\group_detail_screen                                                                                |          2 |        357 |          3 |          9 |        369 |
+| widgets\setting_screen                                                                                     |          1 |         50 |          0 |          4 |         54 |
++------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++------------------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                                                                   | language | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| d:\Personal\Workspace\Flutter\attendo_app\lib\app_blocs\activity\bloc\activity_bloc.dart                   | Dart     |         77 |          2 |          8 |         87 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\app_blocs\activity\bloc\activity_event.dart                  | Dart     |         21 |          0 |          2 |         23 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\app_blocs\activity\bloc\activity_state.dart                  | Dart     |          1 |          0 |          1 |          2 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\app_blocs\activity_choice\bloc\activity_choice_bloc.dart     | Dart     |         43 |          0 |          6 |         49 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\app_blocs\activity_choice\bloc\activity_choice_event.dart    | Dart     |         11 |          0 |          3 |         14 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\app_blocs\activity_choice\bloc\activity_choice_state.dart    | Dart     |         18 |          0 |          7 |         25 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\app_blocs\attendance\bloc\attendance_bloc.dart               | Dart     |        -32 |         44 |          1 |         13 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\app_blocs\attendance\bloc\attendance_event.dart              | Dart     |        -20 |         26 |          2 |          8 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\app_blocs\attendance\bloc\attendance_state.dart              | Dart     |        -14 |         19 |          2 |          7 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\app_blocs\auth\bloc\auth_bloc.dart                           | Dart     |         11 |          2 |          8 |         21 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\app_blocs\auth\bloc\auth_event.dart                          | Dart     |          0 |          0 |          2 |          2 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\app_blocs\group\bloc\group_bloc.dart                         | Dart     |          1 |          0 |          0 |          1 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\app_blocs\invite_member\invitation\bloc\invitation_bloc.dart | Dart     |          1 |          0 |          0 |          1 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\app_blocs\user\bloc\user_state.dart                          | Dart     |          1 |          0 |          0 |          1 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\app_colors\app_colors.dart                                   | Dart     |          5 |          0 |          1 |          6 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\helpers\attendees_bottom_sheet.dart                          | Dart     |          0 |          0 |          1 |          1 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\main.dart                                                    | Dart     |          8 |          1 |         -1 |          8 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\screens\activity\create_activity_screen.dart                 | Dart     |         -1 |          0 |          0 |         -1 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\screens\activity\create_or_update_activity_screen.dart       | Dart     |        185 |          6 |         12 |        203 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\screens\authentication\login_screen.dart                     | Dart     |         -3 |          0 |          0 |         -3 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\screens\authentication\signup_screen.dart                    | Dart     |          8 |          0 |         -1 |          7 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\screens\group\group_detail_screen.dart                       | Dart     |         92 |          3 |          3 |         98 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\screens\navigation\activity\activity_screen.dart             | Dart     |         82 |          0 |          2 |         84 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\screens\navigation\home\home_screen.dart                     | Dart     |        197 |          1 |          0 |        198 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\screens\navigation\notify\notification_screen.dart           | Dart     |         16 |          1 |          2 |         19 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\screens\navigation\profile\profile_screen.dart               | Dart     |        213 |          1 |          3 |        217 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\screens\navigation\setting\settings_screen.dart              | Dart     |        162 |          0 |          0 |        162 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\services\FCMTokenService.dart                                | Dart     |         45 |          0 |          5 |         50 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\services\activity_status_service.dart                        | Dart     |         48 |          6 |         12 |         66 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\services\attendance_service.dart                             | Dart     |         43 |          0 |          5 |         48 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\services\color_service.dart                                  | Dart     |         16 |          0 |          1 |         17 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\services\convert_service.dart                                | Dart     |         29 |          5 |         11 |         45 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\services\invite_user_service.dart                            | Dart     |          0 |          1 |          2 |          3 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\services\today_activity_service.dart                         | Dart     |         26 |          2 |          1 |         29 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\widgets\choice_button.dart                                   | Dart     |          1 |          0 |          0 |          1 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\widgets\circle_avatar.dart                                   | Dart     |         11 |          0 |          0 |         11 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\widgets\custom_act_listtile.dart                             | Dart     |          0 |        -59 |         -3 |        -62 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\widgets\custom_group_listtile.dart                           | Dart     |         24 |          7 |          0 |         31 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\widgets\date_time_picker.dart                                | Dart     |          1 |          0 |          1 |          2 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\widgets\group_detail_screen\all_activity_card.dart           | Dart     |        239 |          3 |          6 |        248 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\widgets\group_detail_screen\today_activity_card.dart         | Dart     |        118 |          0 |          3 |        121 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\widgets\setting_screen\setting_container.dart                | Dart     |         50 |          0 |          4 |         54 |
+| d:\Personal\Workspace\Flutter\attendo_app\lib\widgets\today_activity_listtile.dart                         | Dart     |        -87 |          0 |          4 |        -83 |
+| Total                                                                                                      |          |      1,647 |         71 |        116 |      1,834 |
++------------------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
