@@ -1,7 +1,6 @@
 import 'package:attendo_app/app_blocs/activity/bloc/activity_bloc.dart';
 import 'package:attendo_app/app_blocs/groupdetail/bloc/groupdetail_bloc.dart';
 import 'package:attendo_app/app_colors/app_colors.dart';
-import 'package:attendo_app/screens/activity/create_activity_screen.dart';
 import 'package:attendo_app/screens/activity/create_or_update_activity_screen.dart';
 import 'package:attendo_app/screens/invite/invite_screen.dart';
 import 'package:attendo_app/widgets/circle_avatar.dart';

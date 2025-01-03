@@ -1,0 +1,11 @@
+"filename", "language", "JavaScript", "JSON", "comment", "blank", "total"
+"d:\Personal\Workspace\Flutter\attendo_app\functions\.eslintrc.js", "JavaScript", 29, 0, 0, 1, 30
+"d:\Personal\Workspace\Flutter\attendo_app\functions\index.js", "JavaScript", 11, 0, 5, 4, 20
+"d:\Personal\Workspace\Flutter\attendo_app\functions\package-lock.json", "JSON", 0, 7170, 0, 1, 7171
+"d:\Personal\Workspace\Flutter\attendo_app\functions\package.json", "JSON", 0, 27, 0, 1, 28
+"d:\Personal\Workspace\Flutter\attendo_app\functions\schedules\checkAndSendReminders.js", "JavaScript", 118, 0, 17, 34, 169
+"d:\Personal\Workspace\Flutter\attendo_app\functions\schedules\logTodayActivities.js", "JavaScript", 43, 0, 4, 8, 55
+"d:\Personal\Workspace\Flutter\attendo_app\functions\schedules\sendDailySummary.js", "JavaScript", 83, 0, 6, 19, 108
+"d:\Personal\Workspace\Flutter\attendo_app\functions\utils\getTodayActivities.js", "JavaScript", 45, 0, 5, 9, 59
+"d:\Personal\Workspace\Flutter\attendo_app\functions\utils\notificationUtils.js", "JavaScript", 0, 0, 0, 1, 1
+"Total", "-", 329, 7197, 37, 78, 7641

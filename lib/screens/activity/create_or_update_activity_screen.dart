@@ -1,4 +1,5 @@
 import 'package:attendo_app/app_blocs/activity/bloc/activity_bloc.dart';
+import 'package:attendo_app/app_blocs/group/bloc/group_bloc.dart';
 import 'package:attendo_app/app_blocs/today_activity/bloc/today_activity_bloc.dart';
 import 'package:attendo_app/screens/group/group_detail_screen.dart';
 import 'package:attendo_app/widgets/date_time_picker.dart';
@@ -85,6 +86,9 @@ class _ActivityScreenState extends State<CreateOrUpdateActivityScreen> {
           if (state is ActivityCreatedSuccess ||
               state is ActivityUpdatedSuccess) {
             context.read<TodayActivityBloc>().add(LoadTodayActivities());
+            context.read<GroupBloc>().add(LoadGroups());
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text('Create activity successfully!'), behavior: SnackBarBehavior.floating,));
 
             Navigator.pushAndRemoveUntil(
                 context,
@@ -94,7 +98,7 @@ class _ActivityScreenState extends State<CreateOrUpdateActivityScreen> {
                 (Route<dynamic> route) => route.isFirst);
           } else if (state is ActivityError) {
             ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(state.message)));
+                .showSnackBar(SnackBar(content: Text(state.message), behavior: SnackBarBehavior.floating,));
           }
         },
         child: Padding(
@@ -186,7 +190,7 @@ class _ActivityScreenState extends State<CreateOrUpdateActivityScreen> {
                     }
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Please complete all fields.')),
+                      SnackBar(content: Text('Please complete all fields.'),behavior: SnackBarBehavior.floating,),
                     );
                   }
                 },

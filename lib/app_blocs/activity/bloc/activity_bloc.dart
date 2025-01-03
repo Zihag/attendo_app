@@ -52,6 +52,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
         'create_at': FieldValue.serverTimestamp(),
       });
       emit(ActivityCreatedSuccess());
+      print('Activity create success');
     } catch (e) {
       emit(ActivityError('Failed to create activity'));
     }

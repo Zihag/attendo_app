@@ -45,8 +45,8 @@ class HomeScreen extends StatelessWidget {
               child: Row(
                 children: [
                   CustomCircleAvatar(
-                    width: 60,
-                    height: 60,
+                      width: 60,
+                      height: 60,
                       photoURL: user.photoURL ??
                           'https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg'),
                   const SizedBox(
@@ -155,9 +155,6 @@ class HomeScreen extends StatelessWidget {
                           final activity = activities[index];
                           final groupId = activity['groupId'];
                           final activityId = activity['activityId'];
-
-                          // context.read<ActivityChoiceBloc>().add(
-                          //     LoadChoiceEvent(groupId, activityId, user!.uid));
 
                           return BlocProvider(
                             create: (context) =>
@@ -435,79 +432,87 @@ class HomeScreen extends StatelessWidget {
             height: 20,
           ),
           Expanded(
-            child: BlocBuilder<GroupBloc, GroupState>(
-              builder: (context, state) {
-                if (state is GroupLoading) {
-                  return ListView.builder(
-                    itemCount: 4,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: CardLoading(
-                          height: 100,
-                          borderRadius: BorderRadius.circular(10),
-                          margin: EdgeInsets.only(bottom: 10),
-                        ),
-                      );
-                    },
-                  );
-                } else if (state is GroupLoaded) {
-                  if (state.groups.isEmpty) {
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [Text("Let's create a group!")],
-                    );
-                  }
-                  return ListView.builder(
-                    padding: EdgeInsets.only(bottom: 80),
-                    itemCount: state.groups.length,
-                    itemBuilder: (context, index) {
-                      final group = state.groups[index];
-                      final members = group['member'] as List<dynamic>;
-
-                      return FutureBuilder(
-                          future: FirebaseFirestore.instance
-                              .collection('groups')
-                              .doc(group['id'])
-                              .collection('activities')
-                              .get(),
-                          builder: (context, snapshot) {
-                            final actCount = snapshot.data?.docs.length ?? 0;
-                            return CustomGroupListTile(
-                              title: group['name'],
-                              avatar: CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                    'https://i.pinimg.com/564x/0d/8b/5a/0d8b5a6f0f0b53c6e092a4133fed4fef.jpg'),
-                              ),
-                              description: group['description'],
-                              memberCount:
-                                  ('${members.length} member${members.length > 1 ? 's' : ''}'),
-                              actCount: ('${actCount} activity'),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => GroupDetailScreen(
-                                      groupId: group['id'],
-                                    ),
-                                  ),
-                                );
-                              },
-                              // onOption: () {
-                              //   BlocProvider.of<GroupBloc>(context)
-                              //       .add(DeleteGroup(group['id']));
-                              // },
-                            );
-                          });
-                    },
-                  );
-                } else if (state is GroupError) {
-                  // Hiển thị thông báo lỗi nếu có
-                  return Center(child: Text(state.message));
+            child: BlocListener<GroupBloc, GroupState>(
+              listener: (context, state) {
+                if(state is GroupError){
+                  ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(state.message)));
                 }
-                // Mặc định nếu không có dữ liệu
-                return Center(child: Text('No groups found'));
               },
+              child: BlocBuilder<GroupBloc, GroupState>(
+                builder: (context, state) {
+                  if (state is GroupLoading) {
+                    return ListView.builder(
+                      itemCount: 4,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: CardLoading(
+                            height: 100,
+                            borderRadius: BorderRadius.circular(10),
+                            margin: EdgeInsets.only(bottom: 10),
+                          ),
+                        );
+                      },
+                    );
+                  } else if (state is GroupLoaded) {
+                    if (state.groups.isEmpty) {
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [Text("Let's create a group!")],
+                      );
+                    }
+                    return ListView.builder(
+                      padding: EdgeInsets.only(bottom: 80),
+                      itemCount: state.groups.length,
+                      itemBuilder: (context, index) {
+                        final group = state.groups[index];
+                        final members = group['member'] as List<dynamic>;
+
+                        return FutureBuilder(
+                            future: FirebaseFirestore.instance
+                                .collection('groups')
+                                .doc(group['id'])
+                                .collection('activities')
+                                .get(),
+                            builder: (context, snapshot) {
+                              final actCount = snapshot.data?.docs.length ?? 0;
+                              return CustomGroupListTile(
+                                title: group['name'],
+                                avatar: CircleAvatar(
+                                  backgroundImage: NetworkImage(
+                                      'https://i.pinimg.com/564x/0d/8b/5a/0d8b5a6f0f0b53c6e092a4133fed4fef.jpg'),
+                                ),
+                                description: group['description'],
+                                memberCount:
+                                    ('${members.length} member${members.length > 1 ? 's' : ''}'),
+                                actCount: ('${actCount} activity'),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => GroupDetailScreen(
+                                        groupId: group['id'],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                // onOption: () {
+                                //   BlocProvider.of<GroupBloc>(context)
+                                //       .add(DeleteGroup(group['id']));
+                                // },
+                              );
+                            });
+                      },
+                    );
+                  } else if (state is GroupError) {
+                    // Hiển thị thông báo lỗi nếu có
+                    return Center(child: Text(state.message));
+                  }
+                  // Mặc định nếu không có dữ liệu
+                  return Center(child: Text('No groups found'));
+                },
+              ),
             ),
           ),
         ],

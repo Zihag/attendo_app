@@ -16,6 +16,7 @@ class TodayActivityBloc extends Bloc<TodayActivityEvent, TodayActivityState> {
 
   FutureOr<void> _onLoadTodayActivities(LoadTodayActivities event, Emitter<TodayActivityState> emit) async {
     emit(TodayActivityLoading());
+    print('Emit: TodayActivityLoading');
     try {
       String userId = FirebaseAuth.instance.currentUser?.uid??'';
       final activities = await _todayActivityService.fetchTodayActivities(userId);

@@ -11,13 +11,16 @@ exports.checkAndSendActivityReminders = functions.pubsub
     .onRun(async (context) => {
       try {
         // Lấy danh sách tất cả các nhóm
+        console.time("fetchData");
         const groupsRef = admin.firestore().collectionGroup("groups");
+        console.timeEnd("fetchData");
         const groupsSnapshot = await groupsRef.get();
 
         // Tạo một map để nhóm các nhóm có cùng múi giờ
         const groupsByTimezone = new Map();
 
         // Duyệt qua tất cả các nhóm và phân nhóm theo múi giờ
+        console.time("processTimeZone");
         groupsSnapshot.docs.forEach((groupDoc) => {
           const groupData = groupDoc.data();
           const groupTimezone = groupData.timeZone || "Asia/Saigon"; // Múi giờ mặc định nếu không có
@@ -27,6 +30,7 @@ exports.checkAndSendActivityReminders = functions.pubsub
           }
           groupsByTimezone.get(groupTimezone).push(groupDoc);
         });
+        console.timeEnd("processTimeZone");
 
         // Log danh sách múi giờ và số lượng nhóm trong từng múi giờ
         console.log("Timezones and number of groups:", Array.from(groupsByTimezone.entries()).map(([tz, groups]) => ({
@@ -35,6 +39,7 @@ exports.checkAndSendActivityReminders = functions.pubsub
         })));
 
         // Xử lý từng múi giờ
+        console.time("processCheckAndSendMessage");
         const promises = Array.from(groupsByTimezone.entries()).map(async ([timezone, groups]) => {
           const now = DateTime.now().setZone(timezone);
 
@@ -158,6 +163,7 @@ exports.checkAndSendActivityReminders = functions.pubsub
 
           await Promise.all(groupPromises);
         });
+        console.timeEnd("processCheckAndSendMessage");
 
         await Promise.all(promises);
         console.log("checkAndSendActivityReminders function completes.");

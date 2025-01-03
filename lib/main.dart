@@ -85,7 +85,6 @@ class MyApp extends StatelessWidget {
               ..add(LoadInvitations());
           },
         ),
-        // BlocProvider(create: (context) => ActivityChoiceBloc(attendanceService)),
       ],
       child: MaterialApp(
         home: const SplashScreen(),

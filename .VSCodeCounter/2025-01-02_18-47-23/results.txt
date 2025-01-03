@@ -1,0 +1,37 @@
+Date : 2025-01-02 18:47:23
+Directory : d:\Personal\Workspace\Flutter\attendo_app\functions
+Total : 9 files,  7526 codes, 37 comments, 78 blanks, all 7641 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| JSON       |          2 |      7,197 |          0 |          2 |      7,199 |
+| JavaScript |          7 |        329 |         37 |         76 |        442 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                   | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                      |          9 |      7,526 |         37 |         78 |      7,641 |
+| . (Files)                                                                              |          4 |      7,237 |          5 |          7 |      7,249 |
+| schedules                                                                              |          3 |        244 |         27 |         61 |        332 |
+| utils                                                                                  |          2 |         45 |          5 |         10 |         60 |
++----------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                                               | language   | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| d:\Personal\Workspace\Flutter\attendo_app\functions\.eslintrc.js                       | JavaScript |         29 |          0 |          1 |         30 |
+| d:\Personal\Workspace\Flutter\attendo_app\functions\index.js                           | JavaScript |         11 |          5 |          4 |         20 |
+| d:\Personal\Workspace\Flutter\attendo_app\functions\package-lock.json                  | JSON       |      7,170 |          0 |          1 |      7,171 |
+| d:\Personal\Workspace\Flutter\attendo_app\functions\package.json                       | JSON       |         27 |          0 |          1 |         28 |
+| d:\Personal\Workspace\Flutter\attendo_app\functions\schedules\checkAndSendReminders.js | JavaScript |        118 |         17 |         34 |        169 |
+| d:\Personal\Workspace\Flutter\attendo_app\functions\schedules\logTodayActivities.js    | JavaScript |         43 |          4 |          8 |         55 |
+| d:\Personal\Workspace\Flutter\attendo_app\functions\schedules\sendDailySummary.js      | JavaScript |         83 |          6 |         19 |        108 |
+| d:\Personal\Workspace\Flutter\attendo_app\functions\utils\getTodayActivities.js        | JavaScript |         45 |          5 |          9 |         59 |
+| d:\Personal\Workspace\Flutter\attendo_app\functions\utils\notificationUtils.js         | JavaScript |          0 |          0 |          1 |          1 |
+| Total                                                                                  |            |      7,526 |         37 |         78 |      7,641 |
++----------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+

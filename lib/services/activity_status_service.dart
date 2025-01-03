@@ -6,9 +6,14 @@ class ActivityStatusService {
     final DateTime now = DateTime.now();
     final DateTime activityDate = DateFormat('dd/MM/yyyy').parse(onceDate);
 
-    if (activityDate.isAtSameMomentAs(now)) {
+    //Comparing just date part
+    final bool isSameDate = now.year == activityDate.year &&
+      now.month == activityDate.month &&
+      now.day == activityDate.day;
+
+    if (isSameDate) {
       return 'Today';
-    } else if (activityDate.isAfter(now)) {
+    }else if(activityDate.isAfter(now)){
       return 'Upcoming';
     } else {
       return 'Completed';
@@ -20,25 +25,25 @@ class ActivityStatusService {
   final DateTime now = DateTime.now();
   final int todayWeekday = now.weekday; // Monday = 1, Sunday = 7
 
-  // Ánh xạ "Sun" thành 7 (vì Dart sử dụng Sunday = 7), các ngày còn lại giữ nguyên
+  // Ánh xạ chuỗi "Sun", "Mon",... sang số tương ứng
+  final Map<String, int> dayMapping = {
+    'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4,
+    'Fri': 5, 'Sat': 6, 'Sun': 7,
+  };
+
   final List<int> weeklyDays = weeklyDate.split(',')
-      .map((day) {
-        if (day.trim() == "Sun") {
-          return 7; // Ánh xạ "Sun" thành 7
-        } else {
-          return int.tryParse(day.trim()) ?? -1; // Các ngày còn lại giữ nguyên số
-        }
-      })
-      .where((day) => day != -1) // Loại bỏ các giá trị không hợp lệ
+      .map((day) => dayMapping[day.trim()] ?? -1) // Ánh xạ ngày
+      .where((day) => day != -1) // Loại bỏ giá trị không hợp lệ
       .toList();
 
-  // Kiểm tra xem ngày hôm nay có nằm trong weeklyDays không
+  // Kiểm tra xem ngày hôm nay có trong danh sách không
   if (weeklyDays.contains(todayWeekday)) {
     return 'Today';
   } else {
     return 'Upcoming';
   }
 }
+
 
 
 
